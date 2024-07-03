@@ -15,7 +15,7 @@ export default function SignUp() {
     isActive: false,
     activationCode: "",
     resetToken: "",
-    isAdmin: false, // Default to false, updated separately
+    isAdmin: false, 
   });
 
   const navigate = useNavigate();

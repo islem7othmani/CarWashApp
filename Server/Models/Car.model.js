@@ -4,7 +4,8 @@ const car = new mongoose.Schema({
     carname: {type:String},
     model: {type:String},
     version: {type:String},
-    marque: {type:String},
+    mark: {type:String},
+    image:{type:String},
     user:{type: mongoose.Schema.Types.ObjectId,ref: "User"},
     
 },{timestamps:true})

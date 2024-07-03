@@ -55,24 +55,50 @@ const MapComponent = () => {
        
       ))}
     </MapContainer>
-    <div className='overflow-y-scroll bg-white shadow-xl rounded-xl h-screen absolute w-1/3 z-50 top-0'>
-            <h1 className='font-semibold text-2xl '>Results</h1>
+    <div className='overflow-y-scroll bg-white shadow-xl rounded-xl  h-screen absolute w-1/3 z-50 top-0'>
+            <h1 className='font-semibold text-2xl relative top-2 left-4 pb-4'>Results</h1>
 
             {stations.map((station) => (
-        <div key={station.id} position={[station.lat, station.lon]} className=' h-48 border w-full  py-4 px-5'>
-           <div>
-            <span>Name:</span>{station.tags && station.tags.name ? station.tags.name : 'Car Wash Station'}<br />
-            <span>Name:</span> {station.tags && station.tags['addr:street'] && `${station.tags['addr:street']}, `}
-            <span>Name:</span>{station.tags && station.tags['addr:city'] && `${station.tags['addr:city']}, `}
-            <span>Name:</span>{station.tags && station.tags['addr:postcode']}<br />
-            <span>Name:</span>{station.tags && station.tags.operator && `Operator: ${station.tags.operator}`}<br />
-            <span>Name:</span>{station.tags && station.tags.opening_hours && `Opening Hours: ${station.tags.opening_hours}`}<br />
-            <span>Name:</span>{station.tags && station.tags['contact:phone'] && `Phone: ${station.tags['contact:phone']}`}<br />
-            <span>Name:</span>{station.tags && station.tags['contact:website'] && <a href={station.tags['contact:website']} target="_blank" rel="noopener noreferrer">Website</a>}
-            <button className='w-12'>website <span><img src={website} alt="" /></span></button>
-          </div>
+        <div key={station.id} position={[station.lat, station.lon]} className=' h-80 border w-full  py-4 px-5'>
+           <div className='relative top-2 left-4 '>
+            <span className='font-bold text-xl'>{station.tags && station.tags.name ? station.tags.name : 'Car Wash Station'}</span><br />
+            <span>Street:</span> {station.tags && station.tags['addr:street'] && `${station.tags['addr:street']}, `} <br />
+            <span>City:</span>{station.tags && station.tags['addr:city'] && `${station.tags['addr:city']}, `} <br />
+            <span>Postcode:</span>{station.tags && station.tags['addr:postcode']}<br />
+            <span>Operator:</span>{station.tags && station.tags.operator && `Operator: ${station.tags.operator}`}<br />
+            <span className='text-green-500'>{station.tags && station.tags.opening_hours && `Opening Hours: ${station.tags.opening_hours}`}<br /></span>
+            
+            
+            
+            
+            <span className='bg-blue-200 rounded-full'>Phone:</span>{station.tags && station.tags['contact:phone'] && `Phone: ${station.tags['contact:phone']}`}<br />
+            <span>Website:</span>{station.tags && station.tags['contact:website'] && <a href={station.tags['contact:website']} target="_blank" rel="noopener noreferrer">Website</a>}
+           
+            
+            </div>
+          
+
+          <button className='relative top-4 bg-blue-400 text-white rounded-xl px-16 hover:bg-blue-600 shadow-xl py-2'>Visit Station</button>
+
+
+
           
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
        

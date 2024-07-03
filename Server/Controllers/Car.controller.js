@@ -4,13 +4,14 @@ const User = require("../Models/User.model");
 
 const addCar = async (req, res) => {
   try {
-    const { carname, model, version, marque } = req.body;
+    const { carname, model, version, marque, image } = req.body;
 
     const newCar = new Car({
       carname,
       model,
       version,
       marque,
+      image,
       user: req.verifiedUser._id,
     });
 
@@ -46,6 +47,7 @@ const getCar = async (req, res) => {
           model: 1,
           version: 1,
           marque: 1,
+          image:1,
           user: 1,
           userDetails: { $arrayElemAt: ["$userDetails", 0] },
         },
