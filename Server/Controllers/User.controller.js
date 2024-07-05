@@ -20,12 +20,12 @@ const login = async (req, res) => {
         if (!isValidPassword) return res.status(401).json("Incorrect email or password");
 
         if (!user.isActive) return res.status(401).json("Account is not activated, verify your email");
+        //if (user.isAdmin) return res.status(401).json("Account is for admin");
 
         const token = jwt.sign(
             {
                 _id: user._id,
                 isActive: user.isActive,
-                isAdmin: user.isAdmin,
             },
             process.env.TOKEN_KEY,
             {
@@ -66,7 +66,8 @@ const register = async (req, res) => {
             password: hashedPassword,
             profilepic: req.body.profilepic,
             phone: req.body.phone,
-            activationCode: activCod
+            activationCode: activCod,
+            isAdmin: req.body.isAdmin,
         });
 
         const savedUser = await newUser.save();

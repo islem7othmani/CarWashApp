@@ -8,6 +8,9 @@ import Profil from "./Pages/Profil";
 import MapComponent from "../src/Components/MapComponent";
 import ForgetPassword from "./Components/ForgetPassword";
 import ResetPassword from "./Components/ResetPassword";
+import Estimation from "./Components/Estimation";
+import Admin from "./Components/Admin";
+import Reservation from "./Components/Reservation";
 
 function App() {
   
@@ -24,6 +27,9 @@ function App() {
       <Route path="/Test" element={<Test/>} /> 
       <Route path="/forgetPassword" element={<ForgetPassword/>} /> 
       <Route path="/reset/:pwCode" element={<ResetPassword/>} /> 
+      <Route path="/estimation" element={<Estimation/>} /> 
+      <Route path="/Admin" element={<Admin/>} /> 
+      <Route path="/Reservation" element={<Reservation/>} /> 
       </Routes>
     </Router>
    

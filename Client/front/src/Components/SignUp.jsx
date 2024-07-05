@@ -21,26 +21,21 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setPostData({
       ...postData,
-      [e.target.name]: e.target.value,
+      [name]: type === 'checkbox' || type === 'radio' ? value === 'true' : value,
     });
   };
 
-  const handleAdminChange = () => {
-    const newIsAdmin = !isAdmin; // Toggle the isAdmin state
-    setIsAdmin(newIsAdmin);
-    setPostData({
-      ...postData,
-      isAdmin: newIsAdmin, // Update postData with the new isAdmin value
-    });
-  };
+
 
   const allgood = () => {
     // Check if all required fields are filled
-    if (postData.phone !== "" && postData.username !== "" && postData.password !== "" && postData.email !== "") {
-      navigate("/login"); // Navigate to the login page if valid
-    } else {
+    if (postData.phone !== "" && postData.username !== "" && postData.password !== "" && postData.email !== "" ) {
+      navigate("/login"); 
+    }
+    else {
       console.log("Please fill out all required fields.");
     }
   };
@@ -172,13 +167,12 @@ export default function SignUp() {
             />
 
             <div>
-              <label htmlFor="isAdmin">Admin</label>
-              <input
-                type="checkbox"
-                id="isAdmin"
-                checked={isAdmin}
-                onChange={handleAdminChange}
-              />
+              <label htmlFor="isAdmin">is admin?</label>
+              <input   type="radio"
+                    name="isAdmin"
+                    value="true"
+                    checked={postData.isAdmin === true}
+                    onChange={handleInputChange}/>
             </div>
 
             <button

@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import CarCard from "./CarCard";
+import Admin from "./Admin";
 
 export default function MainProfil() {
   const [email, setEmail] = useState("");
@@ -133,6 +134,10 @@ export default function MainProfil() {
 
   return (
     <>
+
+
+
+
       <div className="relative top-6 ">
         <img
           src="https://i.pinimg.com/564x/6b/9d/75/6b9d75569b9b2f49967153b03afdac47.jpg"
@@ -184,7 +189,7 @@ export default function MainProfil() {
         <div className="grid grid-cols-3 space-x-4 space-y-1">
           <button
             onClick={showform}
-            className=" hover:bg-gray-100 border border-dashed text-blue-500 font-semibold border-blue-500	relative top-12 h-96"
+            className=" rounded-xl hover:bg-gray-100 border border-dashed text-blue-500 font-semibold border-blue-500	relative top-12 h-96"
           >
             add car
           </button>
@@ -257,7 +262,7 @@ export default function MainProfil() {
 
 
 {carsdata.map((car, index) => (
-            <CarCard key={index} car={car} />
+            <CarCard key={index} car={car} carData={carData} />
           ))}
 
 

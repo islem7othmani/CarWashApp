@@ -90,7 +90,7 @@ const deleteCar = async (req, res) => {
 };
 
 
-const updateStory = async (req, res) => {
+const updateCar = async (req, res) => {
 	const id = req.params.id;
 	try {
 		const updatedStory = await Car.findByIdAndUpdate(
@@ -112,5 +112,5 @@ module.exports = {
   getCar,
   getCarByUser,
   deleteCar,
-  updateStory
+  updateCar
 };

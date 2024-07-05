@@ -73,7 +73,7 @@ export default function Login() {
       // Save email and password to cookies (with optional expiration)
       Cookies.set("email", loginData.email, { expires: 7 });  // Set cookie to expire in 7 days
       Cookies.set("password", loginData.password, { expires: 7 });  // Set cookie to expire in 7 days
-      Cookies.set("token",result.token)
+      Cookies.set("token",result.token,  { expires: 7 })
 
       // Navigate to '/home' or another route on successful login
       navigate("/home");
