@@ -35,6 +35,9 @@ app.use('/authentification', userRoutes);
 const carRoutes = require('./Routes/Car.route');
 app.use('/car', carRoutes);
 
+const stationRoutes = require('./Routes/Station.route');
+app.use('/station', stationRoutes);
+
 
 
 mongoose.connect("mongodb+srv://webcamp36:34rkG6lJTQrdzaVx@cluster0.5hmqsyi.mongodb.net/");

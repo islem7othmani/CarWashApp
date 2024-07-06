@@ -93,14 +93,14 @@ const deleteCar = async (req, res) => {
 const updateCar = async (req, res) => {
 	const id = req.params.id;
 	try {
-		const updatedStory = await Car.findByIdAndUpdate(
+		const updatedCar = await Car.findByIdAndUpdate(
 			id,
 			req.body,
 			{
 				new: true,
 			}
 		);
-		return res.status(200).json(updatedStory);
+		return res.status(200).json(updatedCar);
 	} catch (err) {
 		return res.status(500).json(err);
 	}

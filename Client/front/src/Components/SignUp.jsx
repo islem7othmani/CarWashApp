@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import signupimg from '../Images/signupimg.png';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
 
 export default function SignUp() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -29,7 +30,7 @@ export default function SignUp() {
   };
 
 
-
+  Cookies.set("admin", postData.isAdmin, { expires: 7 }); 
   const allgood = () => {
     // Check if all required fields are filled
     if (postData.phone !== "" && postData.username !== "" && postData.password !== "" && postData.email !== "" ) {
@@ -118,14 +119,7 @@ export default function SignUp() {
         <div className="relative left-48 pt-20">
           <div>
             <h1 className="font-bold pb-2 flex justify-center text-xl">CREATE ACCOUNT</h1>
-            <button className="bg-white flex justify-center ml-12 gap-2 shadow-xl rounded-xl py-3 px-12">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png"
-                className="h-6 w-6 rounded-full"
-                alt="Google Logo"
-              />
-              <span>Sign Up With Google</span>
-            </button>
+           
           </div>
           <form className="relative top-6 space-y-2" onSubmit={handleFormSubmit}>
             <input

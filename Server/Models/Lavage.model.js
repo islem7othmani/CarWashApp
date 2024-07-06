@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const lavage = new mongoose.Schema({
     type: {type:String},
-    station: {type:String},//would be like car and user
+    station: {type:String},
     time:{type:String},
     user:{type: mongoose.Schema.Types.ObjectId,ref: "User"},
     car:{type: mongoose.Schema.Types.ObjectId,ref: "Car"},

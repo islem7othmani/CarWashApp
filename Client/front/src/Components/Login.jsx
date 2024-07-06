@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import signupimg from "../Images/signupimg.png";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -6,12 +6,14 @@ import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 
 export default function Login() {
+
   const [loginData, setLoginData] = useState({
     email: Cookies.get("email") || "",  // Get email from cookie if it exists
-    password: Cookies.get("password") || "",  // Get password from cookie if it exists
+    password: Cookies.get("password") || "",   // Get password from cookie if it exists
   });
 
   const navigate = useNavigate();
+ 
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -65,18 +67,19 @@ export default function Login() {
       }
 
       const result = await response.json();
-      console.log("Login successful:", result);
-
-      // Save token to local storage
-      localStorage.setItem("token", result.token);
+      
 
       // Save email and password to cookies (with optional expiration)
       Cookies.set("email", loginData.email, { expires: 7 });  // Set cookie to expire in 7 days
       Cookies.set("password", loginData.password, { expires: 7 });  // Set cookie to expire in 7 days
       Cookies.set("token",result.token,  { expires: 7 })
-
-      // Navigate to '/home' or another route on successful login
-      navigate("/home");
+      Cookies.set("isadmin",result.user.isAdmin,  { expires: 7 })
+      
+      if (result.user.isAdmin) {
+        navigate("/admin");
+    } else {
+        navigate("/home");
+    }
     } catch (error) {
       console.error("Error during login:", error.message);
 
@@ -94,6 +97,9 @@ export default function Login() {
       }
     }
   };
+
+   
+  
 
   // Navigate to the password reset page
   const handleForgotPassword = () => {
