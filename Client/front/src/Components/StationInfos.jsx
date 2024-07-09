@@ -115,11 +115,11 @@ const StationInfos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) {
       return;
     }
-
+  
     setLoading(true); // Show loading spinner
     try {
       const token = Cookies.get('token');
@@ -139,13 +139,17 @@ const StationInfos = () => {
           CodePostal: formData.postCode,
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
-
+  
       const result = await response.json();
       console.log('Station added:', result);
+  
+      // Set station ID in cookie
+      Cookies.set('stationId', result._id, { expires: 7 }); // Expires in 7 days
+  
       setStationData(result); // Update the station data
       setInfos(true); // Show the Informations component
       toast.success('Station added successfully!', {
@@ -162,7 +166,6 @@ const StationInfos = () => {
       setLoading(false); // Hide loading spinner
     }
   };
-
   return (
     <div className="flex items-center justify-center p-12 relative bg-gray-50">
       

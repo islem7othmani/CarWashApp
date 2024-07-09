@@ -1,132 +1,201 @@
 import React, { useState, useEffect } from 'react';
 import * as tf from '@tensorflow/tfjs';
+import Cookies from "js-cookie";
 
-const Estimation = () => {
-    const [numCars, setNumCars] = useState(1);
-    const [typeOfWash, setTypeOfWash] = useState('interne');
-    const [sizeOfCar, setSizeOfCar] = useState('small');
-    const [estimatedWaitTime, setEstimatedWaitTime] = useState(0);
-    const [model, setModel] = useState(null);
+const Estimation = ({ user }) => {
+  const [userD, setUserD] = useState(user);
+  const [numCars, setNumCars] = useState(1);
+  const [typeOfWash, setTypeOfWash] = useState('interne');
+  const [sizeOfCar, setSizeOfCar] = useState('small');
+  const [estimatedWaitTime, setEstimatedWaitTime] = useState(0);
+  const [model, setModel] = useState(null);
 
-    const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
-    const sizeMap = { small: 0, medium: 1, large: 2 };
+  const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
+  const sizeMap = { small: 0, medium: 1, large: 2 };
 
-    const [trainingData, setTrainingData] = useState([
-        [1, 0, 0],  // 1 car, interne wash, small
-        [2, 1, 1],  // 2 cars, externe wash, medium
-        [3, 2, 2],  // 3 cars, interneexterne wash, large
-    ]);
+  const [trainingData, setTrainingData] = useState([
+    [1, 0, 0],  // 1 car, interne wash, small
+    [2, 1, 1],  // 2 cars, externe wash, medium
+    [3, 2, 2],  // 3 cars, interneexterne wash, large
+  ]);
 
-    const [outputData, setOutputData] = useState([
-        [5],  // Wait time for 1 car, interne wash, small
-        [15], // Wait time for 2 cars, externe wash, medium
-        [30], // Wait time for 3 cars, interneexterne wash, large
-    ]);
+  const [outputData, setOutputData] = useState([
+    [5],  // Wait time for 1 car, interne wash, small
+    [15], // Wait time for 2 cars, externe wash, medium
+    [30], // Wait time for 3 cars, interneexterne wash, large
+  ]);
 
-    useEffect(() => {
-        const inputTensor = tf.tensor2d(trainingData);
-        const outputTensor = tf.tensor2d(outputData);
+  useEffect(() => {
+    const inputTensor = tf.tensor2d(trainingData);
+    const outputTensor = tf.tensor2d(outputData);
 
-        const model = tf.sequential();
-        model.add(tf.layers.dense({ inputShape: [3], units: 10, activation: 'relu' }));
-        model.add(tf.layers.dense({ units: 1 }));
+    const model = tf.sequential();
+    model.add(tf.layers.dense({ inputShape: [3], units: 10, activation: 'relu' }));
+    model.add(tf.layers.dense({ units: 1 }));
 
-        model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
+    model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
 
-        const trainModel = async () => {
-            await model.fit(inputTensor, outputTensor, { epochs: 100 });
-            console.log('Model trained!');
-            setModel(model);
-        };
-
-        trainModel();
-    }, [trainingData, outputData]);
-
-    const handleCalculate = async () => {
-        if (model) {
-            const inputTensor = tf.tensor2d([[numCars, washTypeMap[typeOfWash], sizeMap[sizeOfCar]]]);
-            const prediction = model.predict(inputTensor);
-            const waitTime = prediction.dataSync()[0];
-
-            setEstimatedWaitTime(waitTime);
-        }
+    const trainModel = async () => {
+      await model.fit(inputTensor, outputTensor, { epochs: 100 });
+      console.log('Model trained!');
+      setModel(model);
     };
 
-    const handleAddTrainingData = () => {
-        const newTrainingData = [...trainingData, [numCars, washTypeMap[typeOfWash], sizeMap[sizeOfCar]]];
-        const newOutputData = [...outputData, [Number(estimatedWaitTime)]]; // Ensure estimatedWaitTime is a number
-        setTrainingData(newTrainingData);
-        setOutputData(newOutputData);
-    };
+    trainModel();
+  }, [trainingData, outputData]);
 
-    const handleOutputDataChange = (index, value) => {
-        const newOutputData = outputData.map((item, idx) =>
-            idx === index ? [Number(value)] : item
-        );
-        setOutputData(newOutputData);
-    };
+  const handleCalculate = async () => {
+    if (model) {
+      const inputTensor = tf.tensor2d([[numCars, washTypeMap[typeOfWash], sizeMap[sizeOfCar]]]);
+      const prediction = model.predict(inputTensor);
+      const waitTime = prediction.dataSync()[0];
 
-    return (
-        <div className='bg-gray-50 p-4 relative left-80'>
+      setEstimatedWaitTime(waitTime);
+    }
+  };
+
+  const handleAddTrainingData = () => {
+    const newTrainingData = [...trainingData, [numCars, washTypeMap[typeOfWash], sizeMap[sizeOfCar]]];
+    const newOutputData = [...outputData, [Number(estimatedWaitTime)]];
+    setTrainingData(newTrainingData);
+    setOutputData(newOutputData);
+  };
+
+  const handleOutputDataChange = (index, value) => {
+    const newOutputData = outputData.map((item, idx) =>
+      idx === index ? [Number(value)] : item
+    );
+    setOutputData(newOutputData);
+  };
+
+  const [carCount, setCarCount] = useState(5);
+  const stationId = Cookies.get("stationId");
+  const [inputValue, setInputValue] = useState({
+    nbr: "",
+    station: stationId,
+    gerent: userD._id
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleAddCar = async () => {
+    if (!inputValue.nbr) {
+      alert('Please enter a number of cars.');
+      return;
+    }
+
+    try {
+        const token = Cookies.get("token");
+      const response = await fetch('http://localhost:8000/nbrc/addNbrCars', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(inputValue),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setCarCount(result.nbr);
+        alert('Car count updated successfully!');
+      } else {
+        alert('Failed to update car count.');
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  };
+
+  return (
+    <>
+      <div className='flex'>
+        <div className='w-96'></div>
+        <div className='bg-gray-50 p-4 relative w-screen pl-6 space-y-6'>
+          <a className="relative left-0 bg-gray-900 block p-6 border border-gray-100 rounded-lg " href="#">
+            <span className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
+            <div className="my-4 space-y-1">
+              <h2 className="text-white text-2xl font-bold pb-2">Current Number of cars in station</h2>
+              <p className="text-gray-300 py-1">Update the number of cars so your clients can see the frequency of your station.</p>
+              <input type="number" value={inputValue.nbr} name='nbr' onChange={handleInputChange} className='w-1/3 rounded-xl pl-2' placeholder='number of cars' />
+            </div>
+            <div className='grid grid-cols-1'>
+              <div className="flex justify-end text-white font-bold text-5xl relative -top-24 right-24">
+                <span>{carCount}</span>
+              </div>
+              <div className="flex justify-end">
+                <button onClick={handleAddCar} className="px-2 py-1 text-white w-48 border border-gray-200 font-semibold rounded hover:bg-gray-800">Add Car</button>
+              </div>
+            </div>
+          </a>
+          <div>
             <h1 className='font-bold text-xl text-blue-800 mb-4'>Car Wash Wait Time Calculator</h1>
             <p className='text-blue-700'>We need more data so we can estimate time.</p>
             <div className='mt-2'>
-                <label className='font-semibold '>
-                    Type of Wash:
-                    <select value={typeOfWash} onChange={(e) => setTypeOfWash(e.target.value)} className='ml-2 rounded-xl  py-2 px-8'>
-                        <option value="interne">interne</option>
-                        <option value="externe">externe</option>
-                        <option value="interneexterne">interneexterne</option>
-                    </select>
-                </label>
+              <label className='font-semibold '>
+                Type of Wash:
+                <select value={typeOfWash} onChange={(e) => setTypeOfWash(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
+                  <option value="interne">interne</option>
+                  <option value="externe">externe</option>
+                  <option value="interneexterne">interneexterne</option>
+                </select>
+              </label>
             </div>
             <div className='mt-2 font-semibold'>
-                <label>
-                    Size of Car:
-                    <select value={sizeOfCar} onChange={(e) => setSizeOfCar(e.target.value)} className='ml-2 rounded-xl  py-2 px-8'>
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large">Large</option>
-                    </select>
-                </label>
+              <label>
+                Size of Car:
+                <select value={sizeOfCar} onChange={(e) => setSizeOfCar(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
+                  <option value="small">Small</option>
+                  <option value="medium">Medium</option>
+                  <option value="large">Large</option>
+                </select>
+              </label>
             </div>
             <button onClick={handleCalculate} className='mt-4 bg-blue-500 text-white py-1 px-4 rounded shadow-xl'>
-                Calculate Wait Time
+              Calculate Wait Time
             </button>
             <div className='mt-4 font-bold text-green-500 '>
-                <h2>Estimated Wait Time: {estimatedWaitTime.toFixed(2)} minutes</h2>
+              <h2>Estimated Wait Time: {estimatedWaitTime.toFixed(2)} minutes</h2>
             </div>
             <div className='font-semibold mt-4'>
-                
-                {trainingData.map((data, index) => (
-                    <div key={index} className='mt-2'>
-                        <span>{`Training Data ${index + 1}: Cars=${data[0]}, Wash=${Object.keys(washTypeMap)[data[1]]}, Size=${Object.keys(sizeMap)[data[2]]}`}</span>
-                        <input
-                            type="number"
-                            value={outputData[index][0]}
-                            onChange={(e) => handleOutputDataChange(index, e.target.value)}
-                            className='ml-2 rounded-xl  py-2 px-8 shadow-xl'
-                        />
-                    </div>
-                ))}
+              {trainingData.map((data, index) => (
+                <div key={index} className='mt-2'>
+                  <span>{`Training Data ${index + 1}: Cars=${data[0]}, Wash=${Object.keys(washTypeMap)[data[1]]}, Size=${Object.keys(sizeMap)[data[2]]}`}</span>
+                  <input
+                    type="number"
+                    value={outputData[index][0]}
+                    onChange={(e) => handleOutputDataChange(index, e.target.value)}
+                    className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+                  />
+                </div>
+              ))}
             </div>
             <div className='font-semibold mt-4'>
-                <h3>Add New Training Data</h3>
-                <label>
-                    Wait Time for This Configuration (minutes):
-                    <input
-                        type="number"
-                        value={estimatedWaitTime}
-                        onChange={(e) => setEstimatedWaitTime(Number(e.target.value))}
-                        className='ml-2 rounded-xl  py-2 px-8 shadow-xl'
-                    />
-                </label>
-                <button onClick={handleAddTrainingData} className='ml-2 bg-green-500 text-white py-1 px-4 rounded'>
-                    Add Training Data
-                </button>
+              <h3>Add New Training Data</h3>
+              <label>
+                Wait Time for This Configuration (minutes):
+                <input
+                  type="number"
+                  value={estimatedWaitTime}
+                  onChange={(e) => setEstimatedWaitTime(Number(e.target.value))}
+                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+                />
+              </label>
+              <button onClick={handleAddTrainingData} className='ml-2 bg-green-500 text-white py-1 px-4 rounded'>
+                Add Training Data
+              </button>
             </div>
+          </div>
         </div>
-    );
+      </div>
+    </>
+  );
 };
 
 export default Estimation;

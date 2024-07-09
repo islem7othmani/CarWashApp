@@ -24,7 +24,8 @@ export default function Informations() {
 
   const getStationByUser = async () => {
     try {
-        const response = await fetch(`http://localhost:8000/station/getInformations/${formData._id}`, {
+      const stationId = Cookies.get('stationId');
+        const response = await fetch(`http://localhost:8000/station/getInformations/${stationId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -49,7 +50,8 @@ export default function Informations() {
     e.preventDefault();
     try {
       const token = Cookies.get('token');
-      const response = await fetch(`http://localhost:8000/station/updateInformations/${stationdata._id}`, {
+      const stationId = Cookies.get('stationId');
+      const response = await fetch(`http://localhost:8000/station/updateInformations/${stationId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +88,11 @@ export default function Informations() {
 getStationByUser()
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
+    <div className='flex'>
+<div className='w-96'>
+
+</div>
+<div className="p-6 bg-white shadow-md rounded-lg w-2/3">
       {!isUpdating ? (
         <>
           <h1 className="text-blue-600 text-2xl font-bold">Informations about your station</h1>
@@ -223,6 +229,7 @@ getStationByUser()
           </button>
         </form>
       )}
+    </div>
     </div>
   );
 }

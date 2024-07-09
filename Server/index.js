@@ -38,6 +38,8 @@ app.use('/car', carRoutes);
 const stationRoutes = require('./Routes/Station.route');
 app.use('/station', stationRoutes);
 
+const nbrcarsRoutes = require('./Routes/Nbrcars.route');
+app.use('/nbrc', nbrcarsRoutes);
 
 
 mongoose.connect("mongodb+srv://webcamp36:34rkG6lJTQrdzaVx@cluster0.5hmqsyi.mongodb.net/");
