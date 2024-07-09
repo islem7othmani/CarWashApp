@@ -1,12 +1,35 @@
-import React from 'react'
+import {React, useState} from 'react'
 import Navbar from './Navbar'
 
 function Reservation() {
+
+  const [data, setData] = useState('35.6941193%2C10.0895141');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+
+  const handleSeparateCoordinates = () => {
+    // Decode the URL-encoded string
+    const decodedData = decodeURIComponent(data);
+
+    // Split the decoded string by comma to get latitude and longitude
+    const [lat, lon] = decodedData.split(',');
+
+    setLatitude(lat);
+    setLongitude(lon);
+  };
+
+
+
+
   return (
     <>
     <Navbar/>
 
-
+    <div>
+      <button onClick={handleSeparateCoordinates}>Separate Coordinates</button>
+      <p>Latitude: {latitude}</p>
+      <p>Longitude: {longitude}</p>
+    </div>
 
 <div className='space-y-6 relative top-20'>
     <div className='flex  justify-center gap-10'>
@@ -42,10 +65,10 @@ function Reservation() {
         <table class="min-w-full divide-y divide-gray-200">
           <thead>
             <tr>
-              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Age</th>
-              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Address</th>
-              <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Station</th>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">City</th>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nomber of cars</th>
+              <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Wait time</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">

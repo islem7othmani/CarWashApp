@@ -11,6 +11,8 @@ import ResetPassword from "./Components/ResetPassword";
 import Estimation from "./Components/Estimation";
 import Admin from "./Components/Admin";
 import Reservation from "./Components/Reservation";
+import Position from "./Components/Position"; 
+
 
 function App() {
   
@@ -30,6 +32,7 @@ function App() {
       <Route path="/estimation" element={<Estimation/>} /> 
       <Route path="/Admin" element={<Admin/>} /> 
       <Route path="/Reservation" element={<Reservation/>} /> 
+      <Route path="/Position" element={<Position/>} /> 
       </Routes>
     </Router>
    

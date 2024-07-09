@@ -7,6 +7,8 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
 import shadow from 'leaflet/dist/images/marker-shadow.png';
 import website from '../Images/website.png'
+import Cookies from "js-cookie";
+
 
 // Fix the marker icon issue in Leaflet
 L.Icon.Default.mergeOptions({
@@ -31,6 +33,10 @@ const MapComponent = () => {
       });
     });
   }, []);
+
+
+  console.log("your current postion",position);
+  const pos = Cookies.set("position",position)
 
   return (
     <>

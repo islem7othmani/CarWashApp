@@ -100,8 +100,55 @@ const getStation = async (req, res) => {
 
 
 
+const getStationsByCity = async (req, res) => {
+  try {
+    const { city } = req.params;
+
+    if (!city) {
+      return res.status(400).json({ error: "City parameter is required" });
+    }
+
+    const stations = await Station.aggregate([
+      { $match: { city: city } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "gerent",
+          foreignField: "_id",
+          as: "gerentDetails",
+        },
+      },
+      {
+        $project: {
+          nameStation: 1,
+          phoneStation: 1,
+          emailStation: 1,
+          area: 1,
+          city: 1,
+          state: 1,
+          CodePostal: 1,
+          gerentDetails: { $arrayElemAt: ["$gerentDetails", 0] },
+        },
+      },
+    ]);
+
+    if (!stations || stations.length === 0) {
+      return res.status(404).json({ error: "No stations found in the specified city" });
+    }
+
+    return res.status(200).json(stations);
+  } catch (err) {
+    console.error("Error fetching stations:", err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+
 module.exports = {
     StationInformations,
     updateStation,
     getStation,
+    getStationsByCity,
 };

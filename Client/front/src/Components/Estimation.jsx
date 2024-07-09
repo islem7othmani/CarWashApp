@@ -72,6 +72,9 @@ const Estimation = ({ user }) => {
   const stationId = Cookies.get("stationId");
   const [inputValue, setInputValue] = useState({
     nbr: "",
+    waittimeSI: outputData[0][0] || "",
+    waittimeME: outputData[1][0] || "",
+    waittimeLIE: outputData[2][0] || "",
     station: stationId,
     gerent: userD._id
   });
@@ -85,13 +88,13 @@ const Estimation = ({ user }) => {
   };
 
   const handleAddCar = async () => {
-    if (!inputValue.nbr) {
-      alert('Please enter a number of cars.');
+    if (!inputValue.nbr || !inputValue.waittimeSI || !inputValue.waittimeME || !inputValue.waittimeLIE) {
+      alert('Please enter all required fields.');
       return;
     }
 
     try {
-        const token = Cookies.get("token");
+      const token = Cookies.get("token");
       const response = await fetch('http://localhost:8000/nbrc/addNbrCars', {
         method: 'POST',
         headers: {
@@ -121,9 +124,9 @@ const Estimation = ({ user }) => {
           <a className="relative left-0 bg-gray-900 block p-6 border border-gray-100 rounded-lg " href="#">
             <span className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
             <div className="my-4 space-y-1">
-              <h2 className="text-white text-2xl font-bold pb-2">Current Number of cars in station</h2>
+              <h2 className="text-white text-2xl font-bold pb-2">Current Number of Cars in Station</h2>
               <p className="text-gray-300 py-1">Update the number of cars so your clients can see the frequency of your station.</p>
-              <input type="number" value={inputValue.nbr} name='nbr' onChange={handleInputChange} className='w-1/3 rounded-xl pl-2' placeholder='number of cars' />
+              <input type="number" value={inputValue.nbr} name='nbr' onChange={handleInputChange} className='w-1/3 rounded-xl pl-2' placeholder='Number of cars' />
             </div>
             <div className='grid grid-cols-1'>
               <div className="flex justify-end text-white font-bold text-5xl relative -top-24 right-24">
@@ -141,9 +144,9 @@ const Estimation = ({ user }) => {
               <label className='font-semibold '>
                 Type of Wash:
                 <select value={typeOfWash} onChange={(e) => setTypeOfWash(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
-                  <option value="interne">interne</option>
-                  <option value="externe">externe</option>
-                  <option value="interneexterne">interneexterne</option>
+                  <option value="interne">Interne</option>
+                  <option value="externe">Externe</option>
+                  <option value="interneexterne">Interneexterne</option>
                 </select>
               </label>
             </div>
@@ -164,17 +167,37 @@ const Estimation = ({ user }) => {
               <h2>Estimated Wait Time: {estimatedWaitTime.toFixed(2)} minutes</h2>
             </div>
             <div className='font-semibold mt-4'>
-              {trainingData.map((data, index) => (
-                <div key={index} className='mt-2'>
-                  <span>{`Training Data ${index + 1}: Cars=${data[0]}, Wash=${Object.keys(washTypeMap)[data[1]]}, Size=${Object.keys(sizeMap)[data[2]]}`}</span>
-                  <input
-                    type="number"
-                    value={outputData[index][0]}
-                    onChange={(e) => handleOutputDataChange(index, e.target.value)}
-                    className='ml-2 rounded-xl py-2 px-8 shadow-xl'
-                  />
-                </div>
-              ))}
+              <h3>Training Data Wait Times</h3>
+              <div className='mt-2'>
+                <span>Wait Time for 1 Car, Interne Wash, Small Car (SI):</span>
+                <input
+                  type="number"
+                  name="waittimeSI"
+                  value={inputValue.waittimeSI}
+                  onChange={handleInputChange}
+                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+                />
+              </div>
+              <div className='mt-2'>
+                <span>Wait Time for 2 Cars, Externe Wash, Medium Car (ME):</span>
+                <input
+                  type="number"
+                  name="waittimeME"
+                  value={inputValue.waittimeME}
+                  onChange={handleInputChange}
+                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+                />
+              </div>
+              <div className='mt-2'>
+                <span>Wait Time for 3 Cars, Interneexterne Wash, Large Car (LIE):</span>
+                <input
+                  type="number"
+                  name="waittimeLIE"
+                  value={inputValue.waittimeLIE}
+                  onChange={handleInputChange}
+                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+                />
+              </div>
             </div>
             <div className='font-semibold mt-4'>
               <h3>Add New Training Data</h3>
