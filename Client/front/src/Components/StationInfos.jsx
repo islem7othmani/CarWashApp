@@ -134,12 +134,12 @@ const StationInfos = () => {
           phoneStation: formData.phone,
           emailStation: formData.email,
           area: formData.area,
-          city: formData.city,
-          state: formData.state,
+          city: formData.city.toLowerCase(),
+          state: formData.state.toLowerCase(),
           CodePostal: formData.postCode,
         }),
       });
-  
+  console.log("ttttttttt",formData)
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }

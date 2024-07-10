@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
  
 const app = express();
 
+
 const corsOptions = {
   origin: 'http://localhost:3000',  // Replace with your client application's URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
