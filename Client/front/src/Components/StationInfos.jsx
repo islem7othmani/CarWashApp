@@ -20,33 +20,45 @@ const StationInfos = () => {
   const [stationData, setStationData] = useState(null); // State to store station data
 
   useEffect(() => {
-    const fetchStationData = async () => {
-      try {
-        const token = Cookies.get('token');
-        const response = await fetch('http://localhost:8000/station/getStation', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-
-        const result = await response.json();
-        setStationData(result);
-      } catch (error) {
-        console.error('Error fetching station data:', error.message);
-        toast.error('Error fetching station data: ' + error.message, {
-          position: 'top-right',
-          autoClose: 3000,
-        });
-      }
-    };
-
-    fetchStationData();
+    let stationId2 = Cookies.get('stationId');
+    if (stationId2) {
+      fetchStationData(stationId2);
+    }
   }, []);
+
+  const fetchStationData = async (stationId) => {
+    try {
+      const token = Cookies.get('token');
+      const response = await fetch(`http://localhost:8000/station/getInformations/${stationId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+
+      const result = await response.json();
+      setStationData(result);
+      setFormData({
+        name: result.nameStation,
+        phone: result.phoneStation,
+        email: result.emailStation,
+        area: result.area,
+        city: result.city,
+        state: result.state,
+        postCode: result.CodePostal,
+      });
+    } catch (error) {
+      console.error('Error fetching station data:', error.message);
+      toast.error('Error fetching station data: ' + error.message, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -115,11 +127,11 @@ const StationInfos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) {
       return;
     }
-  
+
     setLoading(true); // Show loading spinner
     try {
       const token = Cookies.get('token');
@@ -139,17 +151,17 @@ const StationInfos = () => {
           CodePostal: formData.postCode,
         }),
       });
-  console.log("ttttttttt",formData)
+
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
-  
+
       const result = await response.json();
       console.log('Station added:', result);
-  
+
       // Set station ID in cookie
       Cookies.set('stationId', result._id, { expires: 7 }); // Expires in 7 days
-  
+
       setStationData(result); // Update the station data
       setInfos(true); // Show the Informations component
       toast.success('Station added successfully!', {
@@ -166,12 +178,12 @@ const StationInfos = () => {
       setLoading(false); // Hide loading spinner
     }
   };
+
   return (
     <div className="flex items-center justify-center p-12 relative bg-gray-50">
-      
       <div className="mx-auto w-full max-w-[550px] relative -top-6 bg-gray-50">
-      <div className=''>
-            See Station Informations <span className='text-blue-600'>click here</span>
+        <div className=''>
+          See Station Informations <span className='text-blue-600'>click here</span>
         </div>
         {!infos ? (
           <form onSubmit={handleSubmit}>
@@ -286,9 +298,8 @@ const StationInfos = () => {
               </button>
             </div>
           </form>
-          
         ) : (
-          <Informations  />
+          <Informations stationData={stationData} />
         )}
       </div>
       <ToastContainer />

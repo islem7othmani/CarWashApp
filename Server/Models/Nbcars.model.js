@@ -6,7 +6,6 @@ const Nbcars = new mongoose.Schema({
     waittimeME: {type:Number},
     waittimeLIE: {type:Number},
     station:{type: mongoose.Schema.Types.ObjectId,ref: "Station"},
-    gerent:{type: mongoose.Schema.Types.ObjectId,ref: "User"},
     
 },{timestamps:true})
 

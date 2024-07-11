@@ -9,6 +9,7 @@ const Estimation = ({ user }) => {
   const [sizeOfCar, setSizeOfCar] = useState('small');
   const [estimatedWaitTime, setEstimatedWaitTime] = useState(0);
   const [model, setModel] = useState(null);
+  const [stationId, setStationId] = useState("");
 
   const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
   const sizeMap = { small: 0, medium: 1, large: 2 };
@@ -24,6 +25,16 @@ const Estimation = ({ user }) => {
     [15], // Wait time for 2 cars, externe wash, medium
     [30], // Wait time for 3 cars, interneexterne wash, large
   ]);
+
+  useEffect(() => {
+    const stationIdFromCookie = Cookies.get("stationId");
+    if (stationIdFromCookie) {
+      setStationId(stationIdFromCookie);
+      console.log(`Station ID set from cookie: ${stationIdFromCookie}`);
+    } else {
+      console.error("Station ID not found in cookies.");
+    }
+  }, []);
 
   useEffect(() => {
     const inputTensor = tf.tensor2d(trainingData);
@@ -42,14 +53,13 @@ const Estimation = ({ user }) => {
     };
 
     trainModel();
-  }, [trainingData, outputData]);
+  }, []);
 
   const handleCalculate = async () => {
     if (model) {
       const inputTensor = tf.tensor2d([[numCars, washTypeMap[typeOfWash], sizeMap[sizeOfCar]]]);
       const prediction = model.predict(inputTensor);
-      const waitTime = prediction.dataSync()[0];
-
+      const waitTime = (await prediction.data())[0];
       setEstimatedWaitTime(waitTime);
     }
   };
@@ -61,23 +71,35 @@ const Estimation = ({ user }) => {
     setOutputData(newOutputData);
   };
 
-  const handleOutputDataChange = (index, value) => {
-    const newOutputData = outputData.map((item, idx) =>
-      idx === index ? [Number(value)] : item
-    );
-    setOutputData(newOutputData);
-  };
-
-  const [carCount, setCarCount] = useState(5);
-  const stationId = Cookies.get("stationId");
+  const [carCount, setCarCount] = useState(0);
   const [inputValue, setInputValue] = useState({
     nbr: "",
     waittimeSI: outputData[0][0] || "",
     waittimeME: outputData[1][0] || "",
     waittimeLIE: outputData[2][0] || "",
-    station: stationId,
+    station: "",
     gerent: userD._id
   });
+
+  // Fetch stationId from cookies
+  useEffect(() => {
+    const stationIdFromCookie = Cookies.get("stationId");
+    if (stationIdFromCookie) {
+      setStationId(stationIdFromCookie);
+    } else {
+      console.warn('Station ID not found in cookies');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (stationId) {
+      setInputValue(prevState => ({
+        ...prevState,
+        station: stationId,
+      }));
+      console.log(`Input value updated with station ID: ${stationId}`);
+    }
+  }, [stationId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,6 +110,12 @@ const Estimation = ({ user }) => {
   };
 
   const handleAddCar = async () => {
+    // Check that stationId is correctly set from the cookie before submission
+    if (!inputValue.station) {
+      alert('Station ID is not set. Please refresh the page or try again.');
+      return;
+    }
+
     if (!inputValue.nbr || !inputValue.waittimeSI || !inputValue.waittimeME || !inputValue.waittimeLIE) {
       alert('Please enter all required fields.');
       return;
@@ -117,107 +145,90 @@ const Estimation = ({ user }) => {
   };
 
   return (
-    <>
-      <div className='flex'>
-        <div className='w-96'></div>
-        <div className='bg-gray-50 p-4 relative w-screen pl-6 space-y-6'>
-          <a className="relative left-0 bg-gray-900 block p-6 border border-gray-100 rounded-lg " href="#">
-            <span className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
-            <div className="my-4 space-y-1">
-              <h2 className="text-white text-2xl font-bold pb-2">Current Number of Cars in Station</h2>
-              <p className="text-gray-300 py-1">Update the number of cars so your clients can see the frequency of your station.</p>
-              <input type="number" value={inputValue.nbr} name='nbr' onChange={handleInputChange} className='w-1/3 rounded-xl pl-2' placeholder='Number of cars' />
+    <div className='flex'>
+      <div className='w-96'></div>
+      <div className='bg-gray-50 p-4 relative w-screen pl-6 space-y-6'>
+        <a className="relative left-0 bg-gray-900 block p-6 border border-gray-100 rounded-lg" href="#">
+          <span className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
+          <div className="my-4 space-y-1">
+            <h2 className="text-white text-2xl font-bold pb-2">Current Number of Cars in Station</h2>
+            <p className="text-gray-300 py-1">Update the number of cars so your clients can see the frequency of your station.</p>
+            <input type="number" value={inputValue.nbr} name='nbr' onChange={handleInputChange} className='w-1/3 rounded-xl pl-2' placeholder='Number of cars' />
+          </div>
+          <div className='grid grid-cols-1'>
+            <div className="flex justify-end text-white font-bold text-5xl relative -top-24 right-24">
+              <span>{carCount}</span>
             </div>
-            <div className='grid grid-cols-1'>
-              <div className="flex justify-end text-white font-bold text-5xl relative -top-24 right-24">
-                <span>{carCount}</span>
-              </div>
-              <div className="flex justify-end">
-                <button onClick={handleAddCar} className="px-2 py-1 text-white w-48 border border-gray-200 font-semibold rounded hover:bg-gray-800">Add Car</button>
-              </div>
+            <div className="flex justify-end">
+              <button onClick={handleAddCar} className="px-2 py-1 text-white w-48 border border-gray-200 font-semibold rounded hover:bg-gray-800">Add Car</button>
             </div>
-          </a>
-          <div>
-            <h1 className='font-bold text-xl text-blue-800 mb-4'>Car Wash Wait Time Calculator</h1>
-            <p className='text-blue-700'>We need more data so we can estimate time.</p>
+          </div>
+        </a>
+        <div>
+          <h1 className='font-bold text-xl text-blue-800 mb-4'>Car Wash Wait Time Calculator</h1>
+          <p className='text-blue-700'>We need more data so we can estimate time.</p>
+          <div className='mt-2'>
+            <label className='font-semibold'>
+              Type of Wash:
+              <select value={typeOfWash} onChange={(e) => setTypeOfWash(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
+                <option value="interne">Interne</option>
+                <option value="externe">Externe</option>
+                <option value="interneexterne">Interneexterne</option>
+              </select>
+            </label>
+          </div>
+          <div className='mt-2 font-semibold'>
+            <label>
+              Size of Car:
+              <select value={sizeOfCar} onChange={(e) => setSizeOfCar(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </label>
+          </div>
+          <button onClick={handleCalculate} className='mt-4 bg-blue-500 text-white py-1 px-4 rounded shadow-xl'>
+            Calculate Wait Time
+          </button>
+          <div className='mt-4 font-bold text-green-500'>
+            <h2>Estimated Wait Time: {estimatedWaitTime.toFixed(2)} minutes</h2>
+          </div>
+          <div className='font-semibold mt-4'>
+            <h3>Training Data Wait Times</h3>
             <div className='mt-2'>
-              <label className='font-semibold '>
-                Type of Wash:
-                <select value={typeOfWash} onChange={(e) => setTypeOfWash(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
-                  <option value="interne">Interne</option>
-                  <option value="externe">Externe</option>
-                  <option value="interneexterne">Interneexterne</option>
-                </select>
-              </label>
+              <span>Wait Time for 1 Car, Interne Wash, Small Car (SI):</span>
+              <input
+                type="number"
+                name="waittimeSI"
+                value={inputValue.waittimeSI}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
             </div>
-            <div className='mt-2 font-semibold'>
-              <label>
-                Size of Car:
-                <select value={sizeOfCar} onChange={(e) => setSizeOfCar(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
-                  <option value="small">Small</option>
-                  <option value="medium">Medium</option>
-                  <option value="large">Large</option>
-                </select>
-              </label>
+            <div className='mt-2'>
+              <span>Wait Time for 2 Cars, Externe Wash, Medium Car (ME):</span>
+              <input
+                type="number"
+                name="waittimeME"
+                value={inputValue.waittimeME}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
             </div>
-            <button onClick={handleCalculate} className='mt-4 bg-blue-500 text-white py-1 px-4 rounded shadow-xl'>
-              Calculate Wait Time
-            </button>
-            <div className='mt-4 font-bold text-green-500 '>
-              <h2>Estimated Wait Time: {estimatedWaitTime.toFixed(2)} minutes</h2>
-            </div>
-            <div className='font-semibold mt-4'>
-              <h3>Training Data Wait Times</h3>
-              <div className='mt-2'>
-                <span>Wait Time for 1 Car, Interne Wash, Small Car (SI):</span>
-                <input
-                  type="number"
-                  name="waittimeSI"
-                  value={inputValue.waittimeSI}
-                  onChange={handleInputChange}
-                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
-                />
-              </div>
-              <div className='mt-2'>
-                <span>Wait Time for 2 Cars, Externe Wash, Medium Car (ME):</span>
-                <input
-                  type="number"
-                  name="waittimeME"
-                  value={inputValue.waittimeME}
-                  onChange={handleInputChange}
-                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
-                />
-              </div>
-              <div className='mt-2'>
-                <span>Wait Time for 3 Cars, Interneexterne Wash, Large Car (LIE):</span>
-                <input
-                  type="number"
-                  name="waittimeLIE"
-                  value={inputValue.waittimeLIE}
-                  onChange={handleInputChange}
-                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
-                />
-              </div>
-            </div>
-            <div className='font-semibold mt-4'>
-              <h3>Add New Training Data</h3>
-              <label>
-                Wait Time for This Configuration (minutes):
-                <input
-                  type="number"
-                  value={estimatedWaitTime}
-                  onChange={(e) => setEstimatedWaitTime(Number(e.target.value))}
-                  className='ml-2 rounded-xl py-2 px-8 shadow-xl'
-                />
-              </label>
-              <button onClick={handleAddTrainingData} className='ml-2 bg-green-500 text-white py-1 px-4 rounded'>
-                Add Training Data
-              </button>
+            <div className='mt-2'>
+              <span>Wait Time for 3 Cars, Interneexterne Wash, Large Car (LIE):</span>
+              <input
+                type="number"
+                name="waittimeLIE"
+                value={inputValue.waittimeLIE}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
