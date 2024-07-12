@@ -46,7 +46,7 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-    const codeG = "123456789azertyuiop^$qsdfghjklmù*wxcvbn,;:!/*+-&AZERTYUIOPMLKJHGFDSQWXCVBN";
+    const codeG = "123456789azertyuiop^$qsdfghjklmù*wxcvbn&AZERTYUIOPMLKJHGFDSQWXCVBN";
     let activCod = "";
     for (let i = 0; i < 25; i++) {
         activCod += codeG[Math.floor(Math.random() * codeG.length)];

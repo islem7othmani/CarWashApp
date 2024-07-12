@@ -64,9 +64,10 @@ const StationInfos = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: name === 'city' || name === 'state' ? value.toLowerCase() : value,
     });
   };
+  
 
   const validateForm = () => {
     const { name, phone, email, area, city, state, postCode } = formData;
