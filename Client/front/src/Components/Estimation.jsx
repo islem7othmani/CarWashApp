@@ -78,7 +78,7 @@ const Estimation = ({ user }) => {
     waittimeME: outputData[1][0] || "",
     waittimeLIE: outputData[2][0] || "",
     station: "",
-    gerent: userD._id
+    
   });
 
   // Fetch stationId from cookies
@@ -144,6 +144,7 @@ const Estimation = ({ user }) => {
     }
   };
 
+
   return (
     <div className='flex'>
       <div className='w-96'></div>
@@ -159,40 +160,11 @@ const Estimation = ({ user }) => {
             <div className="flex justify-end text-white font-bold text-5xl relative -top-24 right-24">
               <span>{carCount}</span>
             </div>
-            <div className="flex justify-end">
-              <button onClick={handleAddCar} className="px-2 py-1 text-white w-48 border border-gray-200 font-semibold rounded hover:bg-gray-800">Add Car</button>
-            </div>
+            
           </div>
         </a>
         <div>
-          <h1 className='font-bold text-xl text-blue-800 mb-4'>Car Wash Wait Time Calculator</h1>
-          <p className='text-blue-700'>We need more data so we can estimate time.</p>
-          <div className='mt-2'>
-            <label className='font-semibold'>
-              Type of Wash:
-              <select value={typeOfWash} onChange={(e) => setTypeOfWash(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
-                <option value="interne">Interne</option>
-                <option value="externe">Externe</option>
-                <option value="interneexterne">Interneexterne</option>
-              </select>
-            </label>
-          </div>
-          <div className='mt-2 font-semibold'>
-            <label>
-              Size of Car:
-              <select value={sizeOfCar} onChange={(e) => setSizeOfCar(e.target.value)} className='ml-2 rounded-xl py-2 px-8'>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-              </select>
-            </label>
-          </div>
-          <button onClick={handleCalculate} className='mt-4 bg-blue-500 text-white py-1 px-4 rounded shadow-xl'>
-            Calculate Wait Time
-          </button>
-          <div className='mt-4 font-bold text-green-500'>
-            <h2>Estimated Wait Time: {estimatedWaitTime.toFixed(2)} minutes</h2>
-          </div>
+          
           <div className='font-semibold mt-4'>
             <h3>Training Data Wait Times</h3>
             <div className='mt-2'>
@@ -226,6 +198,9 @@ const Estimation = ({ user }) => {
               />
             </div>
           </div>
+          <div className="flex justify-center">
+              <button onClick={handleAddCar} className="px-2 py-1 text-white w-80 bg-gray-800 relative top-10 border border-gray-200 font-semibold rounded hover:bg-gray-400  ">Update</button>
+            </div>
         </div>
       </div>
     </div>

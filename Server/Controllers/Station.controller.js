@@ -143,6 +143,52 @@ const getStationsByCity = async (req, res) => {
   }
 };
 
+const getStationsByGerent = async (req, res) => {
+  try {
+    const { gerent } = req.params;
+
+    if (!gerent) {
+      return res.status(400).json({ error: 'Gerent parameter is required' });
+    }
+
+    const stationsg = await Station.aggregate([
+      { $match: { gerent: new mongoose.Types.ObjectId(gerent) } }, // Convert `gerent` to ObjectId
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'gerent',
+          foreignField: '_id',
+          as: 'gerentDetails',
+        },
+      },
+      {
+        $project: {
+          nameStation: 1,
+          phoneStation: 1,
+          emailStation: 1,
+          area: 1,
+          city: 1,
+          state: 1,
+          CodePostal: 1,
+          gerentDetails: { $arrayElemAt: ['$gerentDetails', 0] },
+        },
+      },
+    ]);
+
+    if (!stationsg || stationsg.length === 0) {
+      return res.status(404).json({ error: 'No stations found for the specified gerent' });
+    }
+
+    return res.status(200).json(stationsg);
+  } catch (err) {
+    console.error('Error fetching stations:', err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+ 
+
+
 
 
 
@@ -151,4 +197,5 @@ module.exports = {
     updateStation,
     getStation,
     getStationsByCity,
+    getStationsByGerent
 };

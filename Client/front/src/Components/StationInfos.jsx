@@ -25,7 +25,8 @@ const StationInfos = () => {
       fetchStationData(stationId2);
     }
   }, []);
-
+const [showfom,setShowform]=useState("invisible ");
+console.log("yyyyyyyyy")
   const fetchStationData = async (stationId) => {
     try {
       const token = Cookies.get('token');
@@ -51,6 +52,9 @@ const StationInfos = () => {
         state: result.state,
         postCode: result.CodePostal,
       });
+      if (result){
+        console.log("done")
+      }
     } catch (error) {
       console.error('Error fetching station data:', error.message);
       toast.error('Error fetching station data: ' + error.message, {
@@ -179,7 +183,6 @@ const StationInfos = () => {
       setLoading(false); // Hide loading spinner
     }
   };
-
   return (
     <div className="flex items-center justify-center p-12 relative bg-gray-50">
       <div className="mx-auto w-full max-w-[550px] relative -top-6 bg-gray-50">

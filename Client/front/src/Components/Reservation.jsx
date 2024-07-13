@@ -23,7 +23,8 @@ function Reservation() {
   const [estimatedWaitTime, setEstimatedWaitTime] = useState(0);
   const [model, setModel] = useState(null);
   const [stationId, setStationId] = useState("");
-  const [fetchError, setFetchError] = useState("");  // Added to manage fetch errors
+  const [fetchError, setFetchError] = useState("");
+  const [nbrl,setNbrl]=useState(0)  // Added to manage fetch errors
   
   const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
   const sizeMap = { small: 0, medium: 1, large: 2 };
@@ -142,15 +143,19 @@ function Reservation() {
       setStationData(data);  // Update state with fetched data
         // console.log(stationData.nbr)
       // Ensure there are at least 3 data points to access the 3rd one
-      if (data.length >= 0) {
-        const thirdObject = data[0];
-        console.log('Third object data:', thirdObject);
+      if (data.length > 0) {
+        // Get the last object in the array
+        const lastObject = data[data.length - 1];
+        console.log('Last object data:', lastObject);
+      
+        // Extract the relevant properties from the last object
         const x = [
-          [thirdObject.waittimeSI],
-          [thirdObject.waittimeME],
-          [thirdObject.waittimeLIE],
+          [lastObject.waittimeSI],
+          [lastObject.waittimeME],
+          [lastObject.waittimeLIE],
         ];
         setOutputData(x);
+        setNbrl(lastObject.nbr);
 
         // Retrain the model with the updated outputData
         const inputTensor = tf.tensor2d(trainingData);
@@ -366,7 +371,7 @@ function Reservation() {
 
         <div>
           <label htmlFor="numCars" className="block text-sm font-medium text-gray-700">Number of Cars</label>
-         <span>5</span>
+         <span>{nbrl}</span>
         </div>
 
         <button
