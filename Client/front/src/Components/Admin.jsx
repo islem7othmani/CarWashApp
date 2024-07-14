@@ -4,6 +4,7 @@ import * as tf from "@tensorflow/tfjs";
 import Estimation from "./Estimation";
 import StationInfos from "./StationInfos";
 import Informations from "./Informations";
+import Available from "./Available";
 
 export default function Admin() {
   const [numCars, setNumCars] = useState(0);
@@ -63,6 +64,8 @@ export default function Admin() {
   const [estimation, setEstimation] = useState(true);
   const [Station, setStation] = useState(false);
   const [information, setInformation] = useState(false);
+  const [Availability, setAvailability] = useState(false);
+
   const changeUI = () => {
     setEstimation(true);
     setStation(false);
@@ -78,6 +81,13 @@ export default function Admin() {
     setStation(false);
     setEstimation(false);
     setInformation(true);
+  };
+
+  const changeUI4 = () => {
+    setAvailability(true);
+    setStation(false);
+    setEstimation(false);
+    setInformation(false);
   };
 
   const [activeIndex, setActiveIndex] = useState(null);
@@ -263,6 +273,48 @@ export default function Admin() {
                 </button>
               </a>
             </li>
+
+
+
+
+
+
+
+
+
+
+
+            <li
+              className={`${activeIndex === 3 ? "bg-blue-500 rounded-lg" : ""}`}
+              onClick={() => {
+                handleItemClick(3);
+                changeUI4();
+              }}
+            >
+              <a class="" href="#">
+                <button
+                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    class="w-5 h-5 text-inherit"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+                    Set Availability
+                  </p>
+                </button>
+              </a>
+            </li>
           </ul>
           
         </div>
@@ -330,7 +382,7 @@ export default function Admin() {
                       clip-rule="evenodd"
                     ></path>
                   </svg>
-                  {user.username}
+                  Welcome Admin
                 </button>
                 <button
                   class="relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 grid xl:hidden"
@@ -395,6 +447,12 @@ export default function Admin() {
       {information && (
         <div>
           <Informations id={user._id} />
+        </div>
+      )}
+
+{Availability && (
+        <div>
+          <Available />
         </div>
       )}
     </>

@@ -53,29 +53,17 @@ mongoose.connection.on("error", (err) => {
 
 let users = {};
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-//username will replace by client username
-  socket.on('register', (username) => {
-    users[username] = socket.id;
-    console.log(`User registered: ${username} with ID: ${socket.id}`);
-  });
 
-  socket.on('send-notification', ({ to, message }) => {
-    const targetSocketId = users[to];
-    if (targetSocketId) {
-      io.to(targetSocketId).emit('new-notification', message);
-    }
+// Handle new connections
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('sendNotification', (message) => {
+    io.emit('receiveNotification', message); // Broadcast message to all clients
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-    for (let username in users) {
-      if (users[username] === socket.id) {
-        delete users[username];
-        break;
-      }
-    }
+    console.log('A user disconnected');
   });
 });
 io.listen(5000)
