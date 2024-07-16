@@ -42,6 +42,9 @@ app.use('/station', stationRoutes);
 const nbrcarsRoutes = require('./Routes/Nbrcars.route');
 app.use('/nbrc', nbrcarsRoutes);
 
+const reservationRoutes = require('./Routes/Reservation.route');
+app.use('/reservation', reservationRoutes);
+
 
 mongoose.connect("mongodb+srv://webcamp36:34rkG6lJTQrdzaVx@cluster0.5hmqsyi.mongodb.net/");
 mongoose.connection.on("connected", () => {

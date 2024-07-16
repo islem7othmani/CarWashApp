@@ -9,6 +9,8 @@ import shadow from "leaflet/dist/images/marker-shadow.png";
 import website from "../Images/website.png";
 import Cookies from "js-cookie";
 import Navbar from './Navbar'
+import { useParams } from 'react-router-dom';  // Import useParams from react-router-dom
+import { useLocation } from 'react-router-dom';
 
 // Fix the marker icon issue in Leaflet
 L.Icon.Default.mergeOptions({
@@ -20,7 +22,12 @@ L.Icon.Default.mergeOptions({
 const MapComponent = () => {
   const [position, setPosition] = useState([33.892166, 9.561555499999997]);
   const [stations, setStations] = useState([]);
-
+  const { userId } = useParams();
+  console.log("rrrre", userId)
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+  const userId2 = queryParams.get('userId');
+  console.log('User ID2:', userId2);
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords;
@@ -124,7 +131,7 @@ const MapComponent = () => {
           </div>
         ))}
       </div>
-      <a href="/reservation" className='absolute bottom-0 z-50 w-1/3 bg-blue-900 rounded-lg shadow-xl py-3 px-3 text-white font-semibold text-xl flex justify-center pointer-cursor '>Get Reservation</a>
+      <a href={`/reservation/${userId}`} className='absolute bottom-0 z-50 w-1/3 bg-blue-900 rounded-lg shadow-xl py-3 px-3 text-white font-semibold text-xl flex justify-center pointer-cursor '>Get Reservation</a>
 
     </>
   );

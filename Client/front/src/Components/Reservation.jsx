@@ -4,6 +4,11 @@ import Navbar from "./Navbar";
 import axios from "axios";
 import * as tf from '@tensorflow/tfjs';
 import Cookies from "js-cookie";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import Moment from 'react-moment';
+import { UNSAFE_useRouteId, useParams } from 'react-router-dom';  // Import useParams from react-router-dom
+
 
 function Reservation() {
   // const history = useHistory();
@@ -25,7 +30,17 @@ function Reservation() {
   const [stationId, setStationId] = useState("");
   const [fetchError, setFetchError] = useState("");
   const [nbrl,setNbrl]=useState(0)  // Added to manage fetch errors
+  const { userId } = useParams();
+console.log("userid", userId)
+  const [reservationDetails, setReservationDetails] = useState({
   
+    carSize: '',
+    typeLavage: '',
+    date: new Date(),
+    hour: 0,
+    min: 0
+  });
+
   const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
   const sizeMap = { small: 0, medium: 1, large: 2 };
 
@@ -225,6 +240,108 @@ function Reservation() {
     setOutputData(newOutputData);
   };
 
+const [showreserv,setShowreserv]=useState(false)
+  const reserv =(id)=>{
+    console.log("iddd",id)
+         setShowreserv(true)
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const [showCar,setShowCar]=useState(false)
+
+const showCars=()=>{
+      setShowCar(true)
+}
+
+
+
+
+
+
+const handleReservationSubmit = async (e) => {
+  console.log("azerty",stationId)
+  e.preventDefault();
+  try {
+    const reservationData = {
+      carId: "66965ae90d12ef140f05be4b",
+      user: userId,
+      station:"66914f58c7f5559bdcd6bd61",
+      carSize: reservationDetails.carSize,
+      typeLavage: reservationDetails.typeLavage,
+      day: reservationDetails.date.getDate(),
+      month: reservationDetails.date.toLocaleString('default', { month: 'long' }),
+      year: reservationDetails.date.getFullYear(),
+      hour: reservationDetails.hour,
+      min: reservationDetails.min
+    };
+
+    console.log("Reservation data to send:", reservationData); // Log reservation data
+
+    const response = await fetch("http://localhost:8000/reservation/reserv", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reservationData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text(); // Read the response text for more information
+      throw new Error(`Network response was not ok: ${response.statusText}, ${errorText}`);
+    }
+
+    const responseData = await response.json();
+    console.log("Reservation created:", responseData);
+
+    // Reset reservation form
+    setReservationDetails({
+      carSize: '',
+      typeLavage: '',
+      date: new Date(),
+      hour: '',
+      min: ''
+    });
+
+    alert("Reservation created successfully!");
+
+  } catch (error) {
+    console.error("Error creating reservation:", error);
+    alert("Error creating reservation: " + error.message);
+  }
+};
+
+
+
   return (
     <>
       <Navbar />
@@ -271,18 +388,7 @@ function Reservation() {
                       >
                         Number of Cars
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
-                      >
-                        Disponibility
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
-                      >
-                        Actions
-                      </th>
+                     
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -306,6 +412,11 @@ function Reservation() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                             {stat.waitTime}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                            <button onClick={() => reserv(stat._id)} className="bg-green-400 text-white rounded-xl shadow-xl py-1 px-4">
+                              Reservation
+                            </button>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                             <button
@@ -411,7 +522,243 @@ function Reservation() {
   </div>
 )}
 
+{showreserv && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-md">
+            <h1 className="text-xl font-semibold text-gray-800 mb-4">Enter Your Car Details</h1>
+            <p className="text-gray-600 mb-6">Please provide the following details to estimate the wait time for your car wash.</p>
+            
+          <form onSubmit={handleReservationSubmit}>
+            <label>
+              Car Size:
+              <select value={reservationDetails.carSize} onChange={(e) => setReservationDetails({ ...reservationDetails, carSize: e.target.value })}>
+                <option value="">Select Car Size</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </label>
+            <br />
+            <label>
+              Type of Wash:
+              <select value={reservationDetails.typeLavage} onChange={(e) => setReservationDetails({ ...reservationDetails, typeLavage: e.target.value })}>
+                <option value="">Select Wash Type</option>
+                <option value="interne">Interne</option>
+                <option value="externe">Externe</option>
+                <option value="interneexterne">Interne & Externe</option>
+              </select>
+            </label>
+            <br />
+            <label>
+              Date:
+              <DatePicker
+                selected={reservationDetails.date}
+                onChange={(date) => setReservationDetails({ ...reservationDetails, date })}
+              />
+            </label>
+            <br />
+            <label>
+              Hour:
+              <input type="number" value={reservationDetails.hour} onChange={(e) => setReservationDetails({ ...reservationDetails, hour: e.target.value })} />
+            </label>
+            <br />
+            <label>
+              Minutes:
+              <input type="number" value={reservationDetails.min} onChange={(e) => setReservationDetails({ ...reservationDetails, min: e.target.value })} />
+            </label>
+            <br />
+            <div>
+            <span onClick={showCars} className="my-6 cursor-pointer">Select Car</span>
+            </div>
+            <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl  text-white">Submit Reservation</button>
+          </form>
+        </div>
+        </div>
+      )}
   
+
+
+  {showCar &&(
+     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+     <div className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-md">
+       <h1 className="text-xl font-semibold text-gray-800 mb-4">Enter Your Car Details</h1>
+       <p className="text-gray-600 mb-6">Please provide the following details to estimate the wait time for your car wash.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="p-4">
+                    <div class="flex items-center">
+                        <input id="radio-all-search" type="radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                        <label for="radio-all-search" class="sr-only">radio</label>
+                    </div>
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Product name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Color
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Category
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Accessories
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Available
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Price
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Weight
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="w-4 p-4">
+                    <div class="flex items-center">
+                        <input id="radio-table-search-1" type="radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                        <label for="radio-table-search-1" class="sr-only">radio</label>
+                    </div>
+                </td>
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Apple MacBook Pro 17"
+                </th>
+                <td class="px-6 py-4">
+                    Silver
+                </td>
+                <td class="px-6 py-4">
+                    Laptop
+                </td>
+                <td class="px-6 py-4">
+                    Yes
+                </td>
+                <td class="px-6 py-4">
+                    Yes
+                </td>
+                <td class="px-6 py-4">
+                    $2999
+                </td>
+                <td class="px-6 py-4">
+                    3.0 lb.
+                </td>
+                <td class="flex items-center px-6 py-4">
+                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Remove</a>
+                </td>
+            </tr>
+            
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="w-4 p-4">
+                    <div class="flex items-center">
+                        <input id="radio-table-search-3" type="radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                        <label for="radio-table-search-3" class="sr-only">radio</label>
+                    </div>
+                </td>
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Apple TV 4K
+                </th>
+                <td class="px-6 py-4">
+                    Black
+                </td>
+                <td class="px-6 py-4">
+                    TV
+                </td>
+                <td class="px-6 py-4">
+                    Yes
+                </td>
+                <td class="px-6 py-4">
+                    No
+                </td>
+                <td class="px-6 py-4">
+                    $179
+                </td>
+                <td class="px-6 py-4">
+                    1.78 lb.
+                </td>
+                <td class="flex items-center px-6 py-4">
+                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Remove</a>
+                </td>
+            </tr>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="w-4 p-4">
+                    <div class="flex items-center">
+                        <input id="radio-table-search-3" type="radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                        <label for="radio-table-search-3" class="sr-only">radio</label>
+                    </div>
+                </td>
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    AirTag
+                </th>
+                <td class="px-6 py-4">
+                    Silver
+                </td>
+                <td class="px-6 py-4">
+                    Accessories
+                </td>
+                <td class="px-6 py-4">
+                    Yes
+                </td>
+                <td class="px-6 py-4">
+                    No
+                </td>
+                <td class="px-6 py-4">
+                    $29
+                </td>
+                <td class="px-6 py-4">
+                    53 g
+                </td>
+                <td class="flex items-center px-6 py-4">
+                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline ms-3">Remove</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+       </div>
+       </div>
+  )}
     </>
   );
 }
