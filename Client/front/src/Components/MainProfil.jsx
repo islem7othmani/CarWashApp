@@ -40,8 +40,10 @@ export default function MainProfil() {
 
       const userData = await response.json();
       setUser(userData);
-      console.log("user data", userData);
-      console.log(user);
+     // console.log("user data", userData);
+    //  console.log(user);
+    
+  Cookies.set("user", userData._id, { expires: 7 }); 
     } catch (error) {
       setError("Error fetching user data: " + error.message);
     }

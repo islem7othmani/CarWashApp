@@ -5,12 +5,26 @@ import Estimation from "./Estimation";
 import StationInfos from "./StationInfos";
 import Informations from "./Informations";
 import Available from "./Available";
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:5000'); 
 
 export default function Admin() {
   const [numCars, setNumCars] = useState(0);
   const [washTime, setWashTime] = useState(0);
   const [prediction, setPrediction] = useState("");
   const [model, setModel] = useState(null);
+
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     // Load or train the model
@@ -131,13 +145,44 @@ export default function Admin() {
       const userData = await response.json();
       setUser(userData);
       console.log("user data from admin", userData);
-      console.log(user);
+      
     } catch (error) {
       console.log("Error fetching user data: " + error.message);
     }
   };
 
   fetchUserData();
+
+      console.log("xxx",user);
+const stat = Cookies.get("stationId")
+  const [notification, setNotification] = useState('');
+  const [showNotification, setShowNotification]=useState(false);
+  useEffect(() => {
+    socket.on('receiveNotification', (message) => {
+      if (message.stationId === stat) {
+        setNotification(message);
+        setShowNotification(true);
+        console.log("Received notification for station:", message.stationId);
+      }
+    });
+  
+    return () => {
+      socket.off('receiveNotification'); // Clean up the subscription on component unmount
+    };
+  }, []); // Depend on stationId change
+  
+
+
+
+
+
+
+
+
+
+
+
+
 
   const logout = () => {
     // Remove all cookies
