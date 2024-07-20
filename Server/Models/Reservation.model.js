@@ -4,7 +4,7 @@ const reservation = new mongoose.Schema({
     carId: {type: mongoose.Schema.Types.ObjectId,ref: "Car"},
     user: {type: mongoose.Schema.Types.ObjectId,ref: "User"},
     carSize: {type:String},
-    typeLavage:{type:String},
+    typeLavage:{type:String}, 
     day:{type:String},
     month:{type:String},
     year:{type:String},

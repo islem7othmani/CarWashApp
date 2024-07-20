@@ -61,8 +61,16 @@ let users = {};
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  socket.on('sendNotification2', (message) => {
+    io.emit('receiveNotificationNavbar', message); //gerent get new reservation.
+  });
+
   socket.on('sendNotification', (message) => {
-    io.emit('receiveNotification', message); // Broadcast message to all clients
+    io.emit('receiveNotification', message); //user get new station
+  });
+
+  socket.on('sendNotification3', (message) => {
+    io.emit('receiveNotification3', message); //user get new station
   });
 
   socket.on('disconnect', () => {

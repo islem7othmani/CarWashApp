@@ -7,6 +7,8 @@ const socket = io('http://localhost:5000');
 export default function Navbar(msg) {
   const [notification, setNotification] = useState('');
   const [showNotification, setShowNotification]=useState(false);
+  const [notification2, setNotification2] = useState('');
+  const [showNotification2, setShowNotification2]=useState(false);
   useEffect(() => {
     socket.on('receiveNotification', (message) => {
       setNotification(message);
@@ -17,6 +19,9 @@ export default function Navbar(msg) {
       socket.off('receiveNotification'); // Clean up the subscription on component unmount
     };
   }, []);
+
+
+
   
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
@@ -59,6 +64,10 @@ export default function Navbar(msg) {
       setError("Error fetching user data: " + error.message);
     }
   };
+
+
+
+
 
   const logout = () => {
     // Remove all cookies

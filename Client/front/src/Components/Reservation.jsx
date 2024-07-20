@@ -349,7 +349,7 @@ const handleReservationSubmit = async (e) => {
     });
 
     alert("Reservation created successfully!");
-    socket.emit('sendNotification', {
+    socket.emit('sendNotification2', {
       message: 'reservation',
       stationId: statId  // Emit the station ID along with the notification
     });

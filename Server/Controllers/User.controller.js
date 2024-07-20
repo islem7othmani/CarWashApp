@@ -2,6 +2,7 @@ const { json } = require('express');
 const User = require('../Models/User.model');
 const bcryptjs = require("bcryptjs");
 const jwt = require('jsonwebtoken'); 
+const mongoose = require("mongoose");
 
 
 const { sendConfirmationEmail, sendForgetPWEmail } = require('../utils/nodeMailer');
@@ -186,6 +187,29 @@ const getUser = async (req, res) => {
     }; 
 
 
+
+    const getUserById = async (req, res) => {
+        const userId = req.params.id;
+      
+        if (!mongoose.isValidObjectId(userId)) {
+          return res.status(400).json({ message: "Invalid user ID" });
+        }
+      
+        try {
+          const user = await User.findById(userId);
+      
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+      
+          return res.status(200).json(user);
+        } catch (err) {
+          console.error('MongoDB Query Error:', err);
+          return res.status(500).json({ message: "Internal server error", error: err.message });
+        }
+      };
+
+
 module.exports = {
     register,
     login,
@@ -193,4 +217,5 @@ module.exports = {
     forgotPassword,
     resetPassword,
     getUser,
+    getUserById
 };
