@@ -109,6 +109,50 @@ const getReservationsByStation = async (req, res) => {
 
 
 
+const getReservationsById = async (req, res) => {
+  try {
+    const reservationId = req.params.id;
+
+    // Check if reservationId is a valid ObjectId
+    if (!mongoose.isValidObjectId(reservationId)) {
+      return res.status(400).json({ error: "Invalid reservation ID" });
+    }
+
+    // Query reservations using the correct reservationId
+    const reserv = await Reservation.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(reservationId) } }, // Use reservationId here
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $project: {
+          carname: 1,
+          model: 1,
+          version: 1,
+          marque: 1,
+          image: 1,
+          user: 1,
+          userDetails: { $arrayElemAt: ["$userDetails", 0] },
+        },
+      },
+    ]);
+
+    if (!reserv || reserv.length === 0) {
+      return res.status(404).json({ error: "Reservation not found" });
+    }
+
+    return res.status(200).json(reserv[0]);
+  } catch (err) {
+    console.error("Error fetching reservation:", err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 
 
 const deleteReservation = async (req, res) => {
@@ -125,5 +169,6 @@ const deleteReservation = async (req, res) => {
 module.exports = {
   reserv,
   getReservationsByStation,
-  deleteReservation
+  deleteReservation,
+  getReservationsById
 };
