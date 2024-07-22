@@ -10,6 +10,8 @@ import Moment from 'react-moment';
 import { UNSAFE_useRouteId, useParams } from 'react-router-dom';  // Import useParams from react-router-dom
 import SelectCar from "./SelectCar";
 import io from 'socket.io-client';
+import DateTimePicker from 'react-datetime-picker';
+
 
 
 
@@ -37,17 +39,21 @@ function Reservation() {
   const [fetchError, setFetchError] = useState("");
   const [nbrl,setNbrl]=useState(0)  // Added to manage fetch errors
   const [message, setMessage] = useState('');
+  const [reservationsById, setReservationsById] = useState([]);
+
 
   const { userId } = useParams();
 console.log("userid", userId)
-  const [reservationDetails, setReservationDetails] = useState({
-  
-    carSize: '',
-    typeLavage: '',
-    date: new Date(),
-    hour: 0,
-    min: 0
-  });
+const [date, setDate] = useState(new Date());
+const [isDisabled, setIsDisabled] = useState(false);
+const [reservationDetails, setReservationDetails] = useState({
+  carSize: '',
+  typeLavage: '',
+  date: new Date(),
+  hour: '',
+  min: ''
+});
+
 
   const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
   const sizeMap = { small: 0, medium: 1, large: 2 };
@@ -293,21 +299,82 @@ const [showreserv,setShowreserv]=useState(false)
 
 
 
+  const [showCar, setShowCar] = useState(false);
+  const showCars = () => {
+    setShowCar(true);
+  };
+  
+  const disabledDateTimes = [
+    new Date(2024, 6, 15, 3, 0), // July 15, 2024, at 3:00 AM
+    new Date(2024, 6, 26, 0, 0), // July 26, 2024, at 12:00 AM
+    new Date(2024, 6, 29, 0, 0), // July 29, 2024, at 12:00 AM
+    new Date(2024, 6, 15, 18, 0) // July 15, 2024, at 6:00 PM
+  ];
+
+  const isDateTimeDisabled = (selectedDate) => {
+    return disabledDateTimes.some(disabledDateTime =>
+      selectedDate.getFullYear() === disabledDateTime.getFullYear() &&
+      selectedDate.getMonth() === disabledDateTime.getMonth() &&
+      selectedDate.getDate() === disabledDateTime.getDate() &&
+      selectedDate.getHours() === disabledDateTime.getHours() &&
+      selectedDate.getMinutes() === disabledDateTime.getMinutes()
+    );
+  };
+  
+  const handleDateChange = (newDate) => {
+    setDate(newDate);
+    setIsDisabled(isDateTimeDisabled(newDate));
+    setReservationDetails(prevDetails => ({
+      ...prevDetails,
+      date: newDate,
+      hour: newDate.getHours(),
+      min: newDate.getMinutes()
+    }));
+  };
 
 
 
-const [showCar,setShowCar]=useState(false)
-
-const showCars=()=>{
-      setShowCar(true)
-}
 
 
-//console.log("krhf",statId)
-const handleReservationSubmit = async (e) => {
-  const car = Cookies.get("carselected");
-  e.preventDefault();
-  try {
+
+
+  const fetchReservationsById = async (stationId) => {
+    try {
+      console.log("Fetching reservations for:", stationId);
+  
+      const response = await fetch(`http://localhost:8000/reservation/reservations/${stationId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Error: ${response.status} ${response.statusText} - ${errorDetails}`);
+      }
+  
+      const data = await response.json();
+      console.log("Fetched reservations for user:", data);
+      setReservationsById(data);
+  
+      data.forEach(reservation => {
+        console.log("Reservation ID:", reservation.day);
+        console.log("Reservation ID:", reservation.month);
+        console.log("Reservation ID:", reservation.year);
+        console.log("Reservation ID:", reservation.hour);
+        console.log("Reservation ID:", reservation.min);
+      });
+  
+    } catch (error) {
+      console.error('Failed to fetch reservations:', error);
+    }
+  };
+  const [conflict,setConflict]=useState(false);
+  
+  const handleReservationSubmit = async (e) => {
+    const car = Cookies.get("carselected");
+    e.preventDefault();
     const reservationData = {
       carId: car,
       user: userId,
@@ -320,48 +387,85 @@ const handleReservationSubmit = async (e) => {
       hour: reservationDetails.hour,
       min: reservationDetails.min
     };
-
-    console.log("Reservation data to send:", reservationData); // Log reservation data
-
-    const response = await fetch("http://localhost:8000/reservation/reserv", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reservationData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text(); // Read the response text for more information
-      throw new Error(`Network response was not ok: ${response.statusText}, ${errorText}`);
+  
+    console.log("Reservation data to send:", reservationData);
+  
+    // Check for conflicts first
+    for (let reservation of reservationsById) {
+      console.log('Checking reservation:', reservation);
+      console.log('Against reservationData:', reservationData);
+      
+      for (let reservation of reservationsById) {
+        if (
+          reservation.day === reservationData.day &&
+          reservation.month === reservationData.month &&
+          reservation.year === reservationData.year &&
+          reservation.hour === reservationData.hour &&
+          reservation.min === reservationData.min
+        ) {
+          console.log("Conflict detected");
+          setConflict(true);
+ 
+            alert("this date is reserved")
+          
+      
+          break;
+        
+        }
+        // Clear conflict state if no conflict found
+  
+      } 
+      
+      
     }
-
-    const responseData = await response.json();
-    console.log("Reservation created:", responseData);
-
-    // Reset reservation form
-    setReservationDetails({
-      carSize: '',
-      typeLavage: '',
-      date: new Date(),
-      hour: '',
-      min: ''
-    });
-
-    alert("Reservation created successfully!");
-    socket.emit('sendNotification2', {
-      message: 'reservation',
-      stationId: statId  // Emit the station ID along with the notification
-    });
-    console.log("Sending notification to station:", statId);
-
-  } catch (error) {
-    console.error("Error creating reservation:", error);
-    alert("Error creating reservation: " + error.message);
-  }
-};
-
-//console.log("h",stations)
+    
+  
+  
+    // If no conflict, proceed with reservation creation
+    try {
+      const response = await fetch("http://localhost:8000/reservation/reserv", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reservationData),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text(); // Read the response text for more information
+        throw new Error(`Network response was not ok: ${response.statusText}, ${errorText}`);
+      }
+  
+      const responseData = await response.json();
+      console.log("Reservation created:", responseData);
+  
+      // Reset reservation form
+      setReservationDetails({
+        carSize: '',
+        typeLavage: '',
+        date: new Date(),
+        hour: '',
+        min: ''
+      });
+  
+      alert("Reservation created successfully!");
+  
+      // Emit notification
+      socket.emit('sendNotification2', {
+        message: 'reservation',
+        stationId: statId  // Emit the station ID along with the notification
+      });
+      console.log("Sending notification to station:", statId);
+  
+    } catch (error) {
+      console.error("Error creating reservation:", error);
+      alert("Error creating reservation: " + error.message);
+    }
+  };
+  
+  
+  
+//fetchReservationsById('66914f58c7f5559bdcd6bd61')
 
 
 
@@ -438,12 +542,15 @@ const handleReservationSubmit = async (e) => {
                           </td>
                           
                           <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                            <button
-                              className="bg-blue-400 text-white rounded-xl shadow-xl py-1 px-4"
-                              onClick={() => redirectToInfo(stat._id)}
-                            >
-                              See More Information
-                            </button>
+                          <button
+  className="bg-blue-400 text-white rounded-xl shadow-xl py-1 px-4"
+  onClick={() => {
+    redirectToInfo(stat._id);
+    fetchReservationsById(stat._id);
+  }}
+>
+  See More Information
+</button>
                           </td>
                         </tr>
                       ))
@@ -562,30 +669,45 @@ const handleReservationSubmit = async (e) => {
             <label className="font-semibold ">
               Type of Wash:
               <select className="border pl-1 ml-2 rounded-xl "  value={reservationDetails.typeLavage} onChange={(e) => setReservationDetails({ ...reservationDetails, typeLavage: e.target.value })}>
-                <option value="">Select Wash Type</option>
+                
                 <option value="interne">Interne</option>
                 <option value="externe">Externe</option>
                 <option value="interneexterne">Interne & Externe</option>
               </select>
             </label>
             <br />
-            <label className="font-semibold ">
-              Date:
-              <DatePicker className="border pl-1 ml-2 rounded-xl " 
-                selected={reservationDetails.date}
-                onChange={(date) => setReservationDetails({ ...reservationDetails, date })}
-              />
-            </label>
-            <br />
-            <label className="font-semibold ">
-              Hour:
-              <input className="border pl-1 ml-2 rounded-xl "  type="number" value={reservationDetails.hour} onChange={(e) => setReservationDetails({ ...reservationDetails, hour: e.target.value })} />
-            </label>
-            <br />
-            <label className="font-semibold ">
-              Minutes:
-              <input type="number" className="border pl-1 ml-2 rounded-xl "  value={reservationDetails.min} onChange={(e) => setReservationDetails({ ...reservationDetails, min: e.target.value })} />
-            </label>
+            <div>
+      <h1 className="font-semibold ">Date:</h1>
+      <DateTimePicker
+        onChange={handleDateChange}
+        value={date}
+        disableClock={false}
+        format="y-MM-dd h:mm a"
+        clearIcon={null}
+        disableCalendar={false}
+        className="bg-gray-200 "
+      />
+      {isDisabled ? (
+        <p style={{ color: 'red' }}>This time slot is unavailable</p>
+      ) : (
+        <p className="text-gray-500 ">Selected date and time: {date.toString()}</p>
+      )}
+      <form className="hidden " onSubmit={handleReservationSubmit}>
+        <input
+          type="text"
+          placeholder="Car Size"
+          value={reservationDetails.carSize}
+          onChange={(e) => setReservationDetails(prevDetails => ({ ...prevDetails, carSize: e.target.value }))}
+        />
+        <input
+          type="text"
+          placeholder="Type of Lavage"
+          value={reservationDetails.typeLavage}
+          onChange={(e) => setReservationDetails(prevDetails => ({ ...prevDetails, typeLavage: e.target.value }))}
+        />
+        <button type="submit" disabled={isDisabled}>Submit Reservation</button>
+      </form>
+    </div>
             <br />
             </div>
             <div>
