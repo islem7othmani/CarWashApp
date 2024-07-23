@@ -17,7 +17,6 @@ const ReservList = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [reservationById, setReservationById]= useState('')
 
-
   useEffect(() => {
     if (!stationId) {
       setError("Station ID not found in cookies.");
@@ -103,6 +102,7 @@ const ReservList = () => {
         res.min === reservation.min
     );
   };
+
   const [message, setMessage] = useState('');
   const handleRefuseClick = (reservationId) => {
     const confirmed = window.confirm(
@@ -114,11 +114,11 @@ const ReservList = () => {
       socket.emit('sendNotification3', message);
       setMessage(reservationId);
       console.log("sended notif 3.",message)
-    
 
-      
-
+      deleteReservation(reservationId)
     }
+
+
   };
 
   // Pagination logic
@@ -145,7 +145,6 @@ const ReservList = () => {
 
   const deleteReservation = async (reservationId) => {
     try {
-      //    const token = Cookies.get('token');
       const response = await fetch(
         `http://localhost:8000/reservation/delete/${reservationId}`,
         {
@@ -158,19 +157,12 @@ const ReservList = () => {
       const result = await response.json();
       console.log("Delete result:", result);
       if (result.success) {
-        // Trigger a refresh or callback to update the list of cars
         window.location.reload(); // This will reload the page
       }
     } catch (error) {
       console.error("Error deleting car:", error);
     }
   };
-
-
-
-
-
-
 
   return (
     <div className="absolute left-80">
@@ -183,7 +175,7 @@ const ReservList = () => {
         <>
           <table style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
-              <tr style={{ backgroundColor: "green", color: "white" }}>
+              <tr>
                 <th style={{ border: "1px solid black", padding: "8px" }}>
                   User
                 </th>
@@ -220,21 +212,9 @@ const ReservList = () => {
               {currentReservations.map((reservation, index) => {
                 const isDuplicate = checkDuplicate(reservation);
                 const isRefused = refusedReservations.has(reservation._id);
-                const isFirstRow = index === 0; // Check if this is the first row
 
                 return (
-                  <tr
-                    key={reservation._id}
-                    style={{
-                      backgroundColor: isRefused
-                        ? "lightcoral"
-                        : isDuplicate
-                        ? "lightcoral"
-                        : isFirstRow
-                        ? "lightgreen"
-                        : "white",
-                    }}
-                  >
+                  <tr key={reservation._id}>
                     <td style={{ border: "1px solid black", padding: "8px" }}>
                       {reservation.userDetails.username || "Unknown"}
                     </td>
@@ -268,14 +248,11 @@ const ReservList = () => {
                     >
                       {!isRefused && (
                         <>
-                          <button className="px-4 py-2 text-center text-white bg-violet-600 border border-violet-600 rounded active:text-violet-500 hover:bg-transparent hover:text-violet-600 focus:outline-none focus:ring">
-                            Accept
-                          </button>
+                          
                           <button
                             className="px-6 py-2 min-w-[120px] text-center text-violet-600 border border-violet-600 rounded hover:bg-violet-600 hover:text-white active:bg-indigo-500 focus:outline-none focus:ring"
                             onClick={() => {
                               handleRefuseClick(reservation._id);
-                              
                             }}
                           >
                             Refuse
@@ -289,7 +266,7 @@ const ReservList = () => {
             </tbody>
           </table>
 
-          <div className="pagination">
+          <div className="pagination" class="flex justify-center p-4 ">
             {Array.from({ length: totalPages }, (_, index) => (
               <button
                 key={index + 1}

@@ -43,7 +43,7 @@ function Reservation() {
 
 
   const { userId } = useParams();
-console.log("userid", userId)
+//console.log("userid", userId)
 const [date, setDate] = useState(new Date());
 const [isDisabled, setIsDisabled] = useState(false);
 const [reservationDetails, setReservationDetails] = useState({
@@ -109,7 +109,7 @@ const [reservationDetails, setReservationDetails] = useState({
           fetchStationByLocation(state); // Fetch stations when state is obtained
         } catch (err) {
           setError("Error fetching location details");
-          console.error("Error fetching location details:", err);
+          //console.error("Error fetching location details:", err);
         }
       }
     };
@@ -124,12 +124,12 @@ const [reservationDetails, setReservationDetails] = useState({
       const stateNameStr = String(stateName).trim().toLowerCase();
       const encodedStateName = encodeURIComponent(stateNameStr);
   
-      console.log("The name of the state is", stateNameStr);
-      console.log(`Fetching stations for state: ${stateNameStr}`);  // Debugging line
-      console.log(`Encoded state name: ${encodedStateName}`);  // Debugging line
+      //console.log("The name of the state is", stateNameStr);
+      //console.log(`Fetching stations for state: ${stateNameStr}`);  // Debugging line
+      //console.log(`Encoded state name: ${encodedStateName}`);  // Debugging line
   
       const requestURL = `http://localhost:8000/station/getstations/${encodedStateName}`; 
-      console.log(`Request URL: ${requestURL}`);  // Debugging line
+      //console.log(`Request URL: ${requestURL}`);  // Debugging line
   
       const response = await fetch(requestURL, {
         method: "GET",
@@ -144,11 +144,11 @@ const [reservationDetails, setReservationDetails] = useState({
       }
   
       const data = await response.json();
-      console.log('Stations data:', data);  // Debugging line
+      //console.log('Stations data:', data);  // Debugging line
       setStations(data);  // Update stations to an array
     } catch (error) {
       setFetchError("Error fetching station data: " + error.message);  // Set fetch error
-      console.error("Error fetching station data:", error);  // Log the error for debugging
+      //console.error("Error fetching station data:", error);  // Log the error for debugging
     }
   };
   
@@ -168,14 +168,14 @@ const [reservationDetails, setReservationDetails] = useState({
       }
 
       const data = await response.json();
-      console.log('Fetched station data:', data);  // Debugging line
+      //console.log('Fetched station data:', data);  // Debugging line
       setStationData(data);  // Update state with fetched data
-        // console.log(stationData.nbr)
+        // //console.log(stationData.nbr)
       // Ensure there are at least 3 data points to access the 3rd one
       if (data.length > 0) {
         // Get the last object in the array
         const lastObject = data[data.length - 1];
-        console.log('Last object data:', lastObject);
+        //console.log('Last object data:', lastObject);
       
         // Extract the relevant properties from the last object
         const x = [
@@ -198,14 +198,14 @@ const [reservationDetails, setReservationDetails] = useState({
         newModel.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
 
         await newModel.fit(inputTensor, outputTensor, { epochs: 100 });
-        console.log('Model retrained with new output data!');
+        //console.log('Model retrained with new output data!');
         setModel(newModel);
       } else {
-        console.error('Not enough data points to fetch the 3rd object.');
+        //console.error('Not enough data points to fetch the 3rd object.');
       }
     } catch (error) {
       setError("Error fetching station details: " + error.message);
-      console.error("Error fetching station details:", error);
+      //console.error("Error fetching station details:", error);
     }
   };
 
@@ -218,7 +218,7 @@ const [statId,setStatId]=useState("");
 
   // Redirect to more information page (currently commented out)
   const redirectToInfo = (stationId) => {
-    console.log("Station ID:", stationId);
+    //console.log("Station ID:", stationId);
     fetchStationDetailsNbr(stationId);  // Fetch data when button is clicked
     // history.push(`/station-info/${stationId}`);
     setPopup(true);
@@ -238,7 +238,7 @@ const [statId,setStatId]=useState("");
 
     const trainModel = async () => {
       await model.fit(inputTensor, outputTensor, { epochs: 100 });
-      console.log('Model trained!');
+      //console.log('Model trained!');
       setModel(model);
     };
 
@@ -265,7 +265,7 @@ const [statId,setStatId]=useState("");
 
 const [showreserv,setShowreserv]=useState(false)
   const reserv =(id)=>{
-    console.log("iddd",id)
+    //console.log("iddd",id)
      // setIsAvailable(!isAvailable);
  
          setShowreserv(true)
@@ -340,7 +340,7 @@ const [showreserv,setShowreserv]=useState(false)
 
   const fetchReservationsById = async (stationId) => {
     try {
-      console.log("Fetching reservations for:", stationId);
+      //console.log("Fetching reservations for:", stationId);
   
       const response = await fetch(`http://localhost:8000/reservation/reservations/${stationId}`, {
         method: 'GET',
@@ -355,116 +355,152 @@ const [showreserv,setShowreserv]=useState(false)
       }
   
       const data = await response.json();
-      console.log("Fetched reservations for user:", data);
+      //console.log("Fetched reservations for user:", data);
       setReservationsById(data);
   
       data.forEach(reservation => {
-        console.log("Reservation ID:", reservation.day);
-        console.log("Reservation ID:", reservation.month);
-        console.log("Reservation ID:", reservation.year);
-        console.log("Reservation ID:", reservation.hour);
-        console.log("Reservation ID:", reservation.min);
+        //console.log("Reservation ID:", reservation.day);
+        //console.log("Reservation ID:", reservation.month);
+        //console.log("Reservation ID:", reservation.year);
+        //console.log("Reservation ID:", reservation.hour);
+        //console.log("Reservation ID:", reservation.min);
       });
   
     } catch (error) {
-      console.error('Failed to fetch reservations:', error);
+      //console.error('Failed to fetch reservations:', error);
     }
   };
-  const [conflict,setConflict]=useState(false);
-  
-  const handleReservationSubmit = async (e) => {
-    const car = Cookies.get("carselected");
-    e.preventDefault();
-    const reservationData = {
-      carId: car,
-      user: userId,
-      station: statId,  // Assuming statId holds the selected station ID
-      carSize: reservationDetails.carSize,
-      typeLavage: reservationDetails.typeLavage,
-      day: reservationDetails.date.getDate(),
-      month: reservationDetails.date.toLocaleString('default', { month: 'long' }),
-      year: reservationDetails.date.getFullYear(),
-      hour: reservationDetails.hour,
-      min: reservationDetails.min
-    };
-  
-    console.log("Reservation data to send:", reservationData);
-  
-    // Check for conflicts first
-    for (let reservation of reservationsById) {
-      console.log('Checking reservation:', reservation);
-      console.log('Against reservationData:', reservationData);
-      
-      for (let reservation of reservationsById) {
-        if (
-          reservation.day === reservationData.day &&
-          reservation.month === reservationData.month &&
-          reservation.year === reservationData.year &&
-          reservation.hour === reservationData.hour &&
-          reservation.min === reservationData.min
-        ) {
-          console.log("Conflict detected");
-          setConflict(true);
- 
-            alert("this date is reserved")
-          
-      
-          break;
-        
-        }
-        // Clear conflict state if no conflict found
-  
-      } 
-      
-      
+
+
+
+
+
+
+
+
+
+  const [carsdata, setCarsdata] = useState([]);
+const [conflict, setConflict] = useState(false);
+
+const handleReservationSubmit = async (e) => {
+  e.preventDefault();
+
+  const car = Cookies.get("carselected");
+  const reservationData = {
+    carId: car,
+    user: userId, // Ensure userId is set correctly
+    station: statId,  // Ensure statId holds the selected station ID
+    carSize: reservationDetails.carSize,
+    typeLavage: reservationDetails.typeLavage,
+    day: reservationDetails.date.getDate(),
+    month: reservationDetails.date.toLocaleString('default', { month: 'long' }),
+    year: reservationDetails.date.getFullYear(),
+    hour: reservationDetails.hour,
+    min: reservationDetails.min
+  };
+
+  //console.log("Reservation data to send:", reservationData);
+
+  // Check for conflicts
+  const conflictFound = reservationsById.some(reservation =>
+    reservation.day === reservationData.day &&
+    reservation.month === reservationData.month &&
+    reservation.year === reservationData.year &&
+    reservation.hour === reservationData.hour &&
+    reservation.min === reservationData.min
+  );
+
+  if (conflictFound) {
+    //console.log("Conflict detected");
+    setConflict(true);
+    alert("This date is reserved");
+    return; // Exit function if a conflict is found
+  }
+
+  // Proceed with reservation creation if no conflict
+  try {
+    const response = await fetch("http://localhost:8000/reservation/reserv", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reservationData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text(); // Read the response text for more information
+      throw new Error(`Network response was not ok: ${response.statusText}, ${errorText}`);
     }
-    
-  
-  
-    // If no conflict, proceed with reservation creation
-    try {
-      const response = await fetch("http://localhost:8000/reservation/reserv", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reservationData),
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text(); // Read the response text for more information
-        throw new Error(`Network response was not ok: ${response.statusText}, ${errorText}`);
-      }
-  
-      const responseData = await response.json();
-      console.log("Reservation created:", responseData);
-  
-      // Reset reservation form
-      setReservationDetails({
-        carSize: '',
-        typeLavage: '',
-        date: new Date(),
-        hour: '',
-        min: ''
-      });
-  
-      alert("Reservation created successfully!");
-  
-      // Emit notification
+
+    const responseData = await response.json();
+    //console.log("Reservation created:", responseData);
+
+    // Reset reservation form
+    setReservationDetails({
+      carSize: '',
+      typeLavage: '',
+      date: new Date(),
+      hour: '',
+      min: ''
+    });
+
+    alert("Reservation created successfully!");
+
+    // Emit notification
+    if (socket) {
       socket.emit('sendNotification2', {
         message: 'reservation',
-        stationId: statId  // Emit the station ID along with the notification
+        stationId: statId // Emit the station ID along with the notification
       });
-      console.log("Sending notification to station:", statId);
-  
-    } catch (error) {
-      console.error("Error creating reservation:", error);
-      alert("Error creating reservation: " + error.message);
+      //console.log("Sending notification to station:", statId);
     }
+
+  } catch (error) {
+    //console.error("Error creating reservation:", error);
+    alert("Error creating reservation: " + error.message);
+  }
+};
+const storedUser = Cookies.get("user");
+//console.log("Stored user:", storedUser); // Log the stored cookie value
+const [color,setColor]=useState("blue")
+const fetchCarData = async (userId) => {
+//console.log(`Fetching car data for user ID: ${userId}`);
+try {
+  const response = await fetch(`http://localhost:8000/car/getcarByUser/${userId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok.");
+  }
+
+  const cars = await response.json();
+//  //console.log("Fetched cars data:", cars);
+  setCarsdata(cars);
+  //console.log("riehgk",carsdata)
+} catch (error) {
+  //console.error("Error fetching car data:", error);
+  setError("Error fetching car data: " + error.message);
+}
+};
+
+  fetchCarData(storedUser);
+
+  const [selectedCarId, setSelectedCarId] = useState(null);
+
+  const getCar = (id) => {
+    // Set cookie with the selected car ID
+    Cookies.set("carselected", id, { expires: 7 });
+
+    // Update the selected car ID
+    setSelectedCarId(id);
   };
-  
-  
-  
+
+
 //fetchReservationsById('66914f58c7f5559bdcd6bd61')
 
 
@@ -472,16 +508,16 @@ const [showreserv,setShowreserv]=useState(false)
   return (
     <>
       <Navbar />
-      <div className="bg-gray-100 h-screen z-0 mt-6">
+      <div className="bg-gray-100 h-screen z-0 mt-6 ">
         <div className="relative top-20 left-12">
           <h1 className="font-bold text-xl text-blue-600 pb-2">Stations Near You</h1>
           <p className="text-gray-700 font-medium">View detailed information about various car wash stations based on your geographical location</p>
         </div>
 
-        <div className="flex flex-col relative top-36 bg-white">
-          <div className="-m-1.5 ">
-            <div className="p-1.5 w-screen inline-block align-middle">
-              <div className="border rounded-lg overflow-">
+        <div className="flex flex-col relative top-28 bg-white w-full">
+          <div className="bg-gray-100 ">
+            <div className="p-1.5 w-11/12 inline-block align-middle ml-12 ">
+              <div className="border rounded-lg bg-white ">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-200">
                     <tr>
@@ -513,9 +549,20 @@ const [showreserv,setShowreserv]=useState(false)
                         scope="col"
                         className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
                       >
-                        Number of Cars
+                        Phone
                       </th>
-                     
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Email
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Reservation
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -532,13 +579,13 @@ const [showreserv,setShowreserv]=useState(false)
                             {stat.city}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {stat.country}
+                            {stat.state}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {stat.numberOfCars}
+                            {stat.phoneStation}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                            {stat.waitTime}
+                            {stat.emailStation}
                           </td>
                           
                           <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
@@ -572,7 +619,7 @@ const [showreserv,setShowreserv]=useState(false)
         </div>
       </div>
       {popup && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+  <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
     <div className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-md">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Enter Your Car Details</h1>
       <p className="text-gray-600 mb-6">Please provide the following details to estimate the wait time for your car wash.</p>
@@ -607,8 +654,8 @@ const [showreserv,setShowreserv]=useState(false)
         </div>
 
         <div>
-          <label htmlFor="numCars" className="block text-sm font-medium text-gray-700">Number of Cars</label>
-         <span>{nbrl}</span>
+          <label htmlFor="numCars" className="block text-sm font-medium text-gray-700">Cars Waiting</label>
+         <span className="font-bold text-xl">{nbrl}</span>
         </div>
 
         <button
@@ -640,7 +687,7 @@ const [showreserv,setShowreserv]=useState(false)
         onClick={() => setPopup(false)}
         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
@@ -650,15 +697,15 @@ const [showreserv,setShowreserv]=useState(false)
 
 {showreserv && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center ">
-          <div className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-2xl ">
-            <h1 className="text-xl font-semibold text-gray-800 mb-4">Enter Your Car Details</h1>
+          <div className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-2xl h-auto ">
+            <h1 className="text-xl font-semibold text-gray-800 mb-2">Enter Your Car Details</h1>
             <p className="text-gray-600 mb-6">Please provide the following details to estimate the wait time for your car wash.</p>
             
-          <form onSubmit={handleReservationSubmit} className="space-y-4 ">
+          <form onSubmit={handleReservationSubmit} className="space-y-4 h-80  ">
             <div className="">
-            <label className="font-semibold ">
+            <label className="font-semibold flex gap-2">
               Car Size:
-              <select className="border pl-1 ml-2 rounded-xl " value={reservationDetails.carSize} onChange={(e) => setReservationDetails({ ...reservationDetails, carSize: e.target.value })}>
+              <select className="  border-b" value={reservationDetails.carSize} onChange={(e) => setReservationDetails({ ...reservationDetails, carSize: e.target.value })}>
                 
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
@@ -666,9 +713,9 @@ const [showreserv,setShowreserv]=useState(false)
               </select>
             </label>
             <br  />
-            <label className="font-semibold ">
+            <label className="font-semibold  flex gap-2">
               Type of Wash:
-              <select className="border pl-1 ml-2 rounded-xl "  value={reservationDetails.typeLavage} onChange={(e) => setReservationDetails({ ...reservationDetails, typeLavage: e.target.value })}>
+              <select className=" border-b"  value={reservationDetails.typeLavage} onChange={(e) => setReservationDetails({ ...reservationDetails, typeLavage: e.target.value })}>
                 
                 <option value="interne">Interne</option>
                 <option value="externe">Externe</option>
@@ -677,6 +724,7 @@ const [showreserv,setShowreserv]=useState(false)
             </label>
             <br />
             <div>
+              <div  className="flex gap-2">
       <h1 className="font-semibold ">Date:</h1>
       <DateTimePicker
         onChange={handleDateChange}
@@ -685,12 +733,13 @@ const [showreserv,setShowreserv]=useState(false)
         format="y-MM-dd h:mm a"
         clearIcon={null}
         disableCalendar={false}
-        className="bg-gray-200 "
+        className="bg-gray-100 w-72 mb-2"
       />
+      </div>
       {isDisabled ? (
         <p style={{ color: 'red' }}>This time slot is unavailable</p>
       ) : (
-        <p className="text-gray-500 ">Selected date and time: {date.toString()}</p>
+        <p className="text-gray-500 -mb-2">Selected date and time: {date.toString()}</p>
       )}
       <form className="hidden " onSubmit={handleReservationSubmit}>
         <input
@@ -711,10 +760,23 @@ const [showreserv,setShowreserv]=useState(false)
             <br />
             </div>
             <div>
-            <span onClick={showCars} className="my-6 cursor-pointer bg-green-400 py-1 px-4 rounded-xl font-semibold  text-white w-full ">Select Car</span>
+            <span onClick={showCars} className="mb-2 border border-blue-500  border-dashed py-4 px-4 text-blue-500 cursor-pointer hover:bg-gray-100 ">+ Select Car</span>
             </div>
-            <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl  text-white">Submit Reservation</button>
+            <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl relative top-4 text-white">Submit Reservation</button>
           </form>
+
+
+
+
+          <button
+        type="button"
+        onClick={() => setShowreserv(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
         </div>
         </div>
       )}
@@ -724,10 +786,75 @@ const [showreserv,setShowreserv]=useState(false)
   {showCar &&(
     <>
     <div>
-      <span className="absolute right-0 z-50 text-white">Xxxxxx</span>
-      </div>
-    
-     <SelectCar/>
+ 
+     
+
+
+
+
+
+
+
+
+
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center ">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-2xl h-auto ">
+            <h1 className="text-xl font-semibold text-gray-800 mb-2">Enter Your Car Details</h1>
+            <p className="text-gray-600 mb-6">Please provide the following details to estimate the wait time for your car wash.</p>
+            
+
+            {error && <p className="text-red-600">{error}</p>}
+
+<div className="relative overflow-x-auto">
+  <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" className="px-6 py-3">Car</th>
+        <th scope="col" className="px-6 py-3">Mark</th>
+        <th scope="col" className="px-6 py-3">Select</th>
+      </tr>
+    </thead>
+    <tbody>
+      {carsdata.length > 0 ? (
+        carsdata.map((car, index) => (
+          <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" className="px-6 py-4 font-medium text-gray-900  whitespace-nowrap dark:text-white">
+              <img src={car.image} alt="" className="w-56  shadow-xl " />
+            </th>
+            <td className="px-6 py-4 font-bold">{car.model}</td>
+            <td className="px-6 py-4">
+            <button
+          key={car._id}
+          className={`font-semibold ${selectedCarId === car._id ? 'bg-green-500' : 'bg-blue-500'} rounded-lg py-2 px-5 text-white`}
+          onClick={() => getCar(car._id)}
+        >
+          Select
+        </button>        </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="3" className="px-6 py-4 text-center">No cars available</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+     </div>
+
+
+     <button
+        type="button"
+        onClick={() => setShowCar(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+     </div>
+     </div>
      </>
   )}
     </>

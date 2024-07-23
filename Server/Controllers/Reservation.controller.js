@@ -155,6 +155,73 @@ const getReservationsById = async (req, res) => {
 
 
 
+
+
+const getReservationsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Validate userId
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    // Aggregate reservations by user ID
+    const reservations = await Reservation.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: { path: "$userDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "stations",
+          localField: "station",
+          foreignField: "_id",
+          as: "stationDetails",
+        },
+      },
+      { $unwind: { path: "$stationDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          carId: 1,
+          carSize: 1,
+          typeLavage: 1,
+          day: 1,
+          month: 1,
+          year: 1,
+          hour: 1,
+          min: 1,
+          station: 1,
+          "userDetails.name": 1,
+          "stationDetails.nameStation": 1,
+          "stationDetails.city": 1,
+          "stationDetails.state": 1,
+          "stationDetails.CodePostal": 1,
+        },
+      },
+    ]);
+
+    // Check if there are no reservations
+    if (reservations.length === 0) {
+      return res.status(404).json({ error: "No reservations found for this user" });
+    }
+
+    // Return the reservations with populated user and station information
+    return res.status(200).json(reservations);
+  } catch (err) {
+    console.error("Error fetching reservations:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
 const deleteReservation = async (req, res) => {
 	const id = req.params.id;
 	try {
@@ -170,5 +237,6 @@ module.exports = {
   reserv,
   getReservationsByStation,
   deleteReservation,
-  getReservationsById
+  getReservationsById,
+  getReservationsByUserId
 };

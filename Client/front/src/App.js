@@ -13,6 +13,7 @@ import Admin from "./Components/Admin";
 import Reservation from "./Components/Reservation";
 import Position from "./Components/Position"; 
 import Calender from "./Components/Calender"; 
+import MyReservation from "./Components/MyReserv"; 
 
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
       <Route path="/Reservation/:userId" element={<Reservation/>} /> 
       <Route path="/Position" element={<Position/>} /> 
       <Route path="/calender" element={<Calender/>} /> 
-
+      <Route path="/MyReservation/:userId" element={<MyReservation/>} /> 
       </Routes>
     </Router>
    
