@@ -73,6 +73,10 @@ io.on('connection', (socket) => {
     io.emit('receiveNotification3', message); //user get new station
   });
 
+  socket.on('sendReminder', (message) => {
+    io.emit('getReminder', message); //reminder
+  });
+
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });

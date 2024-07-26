@@ -12,6 +12,11 @@ export default function Navbar(msg) {
   const [notification2, setNotification2] = useState('');
   const [showNotification2, setShowNotification2]=useState(false);
 
+
+  const [notification3, setNotification3] = useState('');
+  const [showNotification3, setShowNotification3]=useState(false);
+
+
   const [reservationById, setReservationById]= useState('')
 
 
@@ -62,8 +67,8 @@ export default function Navbar(msg) {
 
       const userData = await response.json();
       setUser(userData);
-      console.log("user data", userData);
-      console.log(user);
+   //   console.log("user data", userData);
+  //    console.log(user);
     } catch (error) {
       setError("Error fetching user data: " + error.message);
     }
@@ -73,13 +78,13 @@ export default function Navbar(msg) {
 
  // console.log(user._id);
 
- 
- const fetchReservationsById = async (message2) => {
+ const [userId, setUserId]=useState();
+ const fetchReservationsById = async (message3) => {
   try {
-      console.log("Fetching reservations for:", message2); // Log before fetch
+  //    console.log("Fetching reservations for:", message2); // Log before fetch
       
 
-      const response = await fetch(`http://localhost:8000/reservation/reservationById/${message2}`, {
+      const response = await fetch(`http://localhost:8000/reservation/reservationById/${message3}`, {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json'
@@ -94,42 +99,96 @@ export default function Navbar(msg) {
       const data = await response.json();
       console.log("Fetched reservations:", data); // Log fetched data
       setReservationById(data);
+      setUserId(data.user)
   } catch (error) {
       console.error('Failed to fetch reservations:', error);
   }
 };
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-
-
+const cookieUser = Cookies.get("user");
 useEffect(() => {
   socket.on("receiveNotification", (message) => {
     setNotification(message);
     setShowNotification(true);
   });
+
   socket.on("receiveNotification3", async (message2) => {
     console.log("Received notification 3:", message2);
-    await fetchReservationsById(message2);
+    // Uncomment this if you want to fetch reservations
+    // await fetchReservationsById(message2);
   });
+ 
+ //if(userId === cookieUser){
+  socket.on("getReminder", async (message3) => {
+    try {
+      // Wait for fetchReservationsById to complete
+      await fetchReservationsById(message3);
+  
+      // Wait for 1 minute (60000 milliseconds)
+      await delay(60000);
+  
+      // Log userId
+      console.log(userId);
+  
+      // Check the condition
+      if (userId === cookieUser) {
+        console.log("Received reminder:", message3);
+        setShowNotification3(true);
+      }
+    } catch (error) {
+      console.error("Error handling reminder:", error);
+    }
+  });
+  
+// }
 
   return () => {
     socket.off("receiveNotification");
     socket.off("receiveNotification3");
+    socket.off("getReminder");
   };
 }, []);
-
 useEffect(() => {
   if (reservationById && user && reservationById.user === user._id) {
     setNotification2(reservationById);
     setShowNotification2(true);
   }
 }, [reservationById, user]);
+const [av,setAv]= useState(false);
+  const showAv = () =>{
+    if(showNotification === true){
+      setAv(true)
+     
+    }
+    else{
+      setAv(false)
+    }
+    setShowNotification(false)
+   
+  }
 
+  const [showNL1 ,setShowNL1]=useState(false)
 
-console.log("iferjlqekjgrlkjrg",user)
-console.log("iferjlqekjgrlkjrg",reservationById.user)
-console.log("iferjlqekjgrlkjrg",user._id)
+  const show15 =()=>{
+    if(showNotification3 === true){
+      setShowNL1(true)
+    }else{
+      setShowNL1(false)
+    }
+    setNotification3(false)
+  }
+//console.log("iferjlqekjgrlkjrg",user)
+//console.log("iferjlqekjgrlkjrg",reservationById.user)
+//console.log("iferjlqekjgrlkjrg",user._id)
+const [showNL ,setShowNL]=useState(false)
+const showNotificationList = () =>{
 
+    setShowNL(true)
+  
 
+       
+}
 
 
   const logout = () => {
@@ -193,39 +252,18 @@ console.log("iferjlqekjgrlkjrg",user._id)
             </div>
 
             <div className="relative flex items-center justify-between">
-            {showNotification2 && (
-      <>
-      <div className="text-white bg-red-500 rounded-full absolute -left-4 bottom-4 z-50 h-4 w-4 flex items-center  justify-center">
-        <span>2</span>
-      </div>
+        
+  
 
 
-
-
-
-
-
-
-
-
-
-</>
-
-
-
-
-
-
-
-    )}
   <div
     className="relative top-2 right-8"
     data-twe-dropdown-ref
     data-twe-dropdown-alignment="end"
   >
-    {showNotification && (
-      <div className="text-white bg-red-500 rounded-full absolute left-2 h-6 w-6 flex items-center justify-center">
-        <span>2</span>
+    {(showNotification || showNotification3 ) && (
+      <div className="text-white bg-red-500 rounded-full absolute left-2 h-3 w-3 flex items-center justify-center">
+        
       </div>
 
 
@@ -238,6 +276,7 @@ console.log("iferjlqekjgrlkjrg",user._id)
 
 
     )}
+        
    
     <a
       className="me-4 flex items-center text-neutral-600 dark:text-white"
@@ -247,7 +286,7 @@ console.log("iferjlqekjgrlkjrg",user._id)
       data-twe-dropdown-toggle-ref
       aria-expanded="false"
     >
-      <span className="[&>svg]:w-5">
+      <span className="[&>svg]:w-5" onClick={() => { showAv(); show15(); }}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -307,10 +346,31 @@ console.log("iferjlqekjgrlkjrg",user._id)
 
 
 
+{av && (
+ <div class="bg-white text-black border z-10 w-96 absolute right-56 top-10 rounded-lg shadow-xl h-28 ">
+                              
+                            
+                              
+ <div class="relative top-4 ">
+     <h4 class="font-bold  flex justify-start  pl-4">New Station Available</h4>
+     <p class="font-semibold  flex justify-start  pl-4 pt-1">A new station near you is available, check station list.</p>
+ </div>
+</div>
+
+)}
 
 
-
-
+{showNL1 && (
+  <div class="bg-white text-black border z-10 w-96 absolute right-56 top-10 rounded-lg shadow-xl h-28 ">
+                              
+                            
+                              
+  <div class="relative top-4 ">
+      <h4 class="font-bold  flex justify-start  pl-4">Appointment is soon</h4>
+      <p class="font-semibold  flex justify-start  pl-4 pt-1">About 15 min left for your appointment</p>
+  </div>
+ </div>
+)}
 
 
 

@@ -174,27 +174,32 @@ export default function Admin() {
 
     //  console.log("xxx",user);
 const stat = Cookies.get("stationId")
+
+const [isListening, setIsListening] = useState(false);
+
+const [notification, setNotification] = useState('');
+const [showNotification, setShowNotification] = useState(false);
 //console.log("ee",stat)
-  const [notification, setNotification] = useState('');
-  const [showNotification, setShowNotification]=useState(false);
-  useEffect(() => {
-    socket.on('receiveNotificationNavbar', (message) => {
-      if (message.stationId === stat) {
-        setNotification(message);
-        setShowNotification(true);
-        console.log("Received notification for station:", message.stationId);
-      }
-    });
-  
-    return () => {
-      socket.off('receiveNotification'); // Clean up the subscription on component unmount
-    };
-  }, []); // Depend on stationId change
-  
+useEffect(() => {
+  const handleNotification = (message) => {
+    if (message.stationId === stat) {
+      setNotification(message);
+      setShowNotification(true);
+      console.log("Received notification for station:", message.stationId);
+    }
+  };
 
+  socket.on('receiveNotificationNavbar', handleNotification);
 
+  return () => {
+    socket.off('receiveNotificationNavbar', handleNotification); // Clean up the subscription on component unmount
+  };
+}, [stat]); // Depend on stat change
 
-
+const showNL =()=>{
+       setIsListening(!isListening);
+       setShowNotification(false)
+}
 
 
 
@@ -349,37 +354,6 @@ const stat = Cookies.get("stationId")
 
 
 
-            <li
-              className={`${activeIndex === 3 ? "bg-blue-500 rounded-lg" : ""}`}
-              onClick={() => {
-                handleItemClick(3);
-                changeUI4();
-              }}
-            >
-              <a class="" href="#">
-                <button
-                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-                  type="button"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="w-5 h-5 text-inherit"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
-                    Set Availability
-                  </p>
-                </button>
-              </a>
-            </li>
 
 
 
@@ -443,21 +417,9 @@ const stat = Cookies.get("stationId")
         <nav class="block w-full max-w-full bg-transparent text-white shadow-none rounded-xl transition-all px-0 py-1">
           <div class="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
             <div class="capitalize">
-              <nav aria-label="breadcrumb" class="w-max">
-                <ol class="flex flex-wrap items-center w-full bg-opacity-60 rounded-md bg-transparent p-0 transition-all">
-                  <li class="flex items-center text-blue-gray-900 antialiased font-sans text-sm font-normal leading-normal cursor-pointer transition-colors duration-300 hover:text-light-blue-500">
-                    <a href="#">
-                      <p class="block antialiased font-sans text-sm leading-normal text-blue-900 font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100">
-                        dashboard
-                      </p>
-                    </a>
-                
-                  </li>
-                 
-                </ol>
-              </nav>
-              <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-gray-900">
-                home
+            
+              <h6 class="">
+           <Available/>
               </h6>
             </div>
             <div class="flex items-center gap-4 relative right-5">
@@ -483,6 +445,7 @@ const stat = Cookies.get("stationId")
                   </svg>
                 </span>
               </button>
+              
               <a href="#">
                 <button
                   class="middle none font-sans font-bold center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 hidden items-center gap-1 px-4 xl:flex"
@@ -524,18 +487,34 @@ const stat = Cookies.get("stationId")
                   </span>
                 </button>
               </a> 
+             
               <button
-                aria-expanded="false"
-                aria-haspopup="menu"
-                id=":r2:"
-                class="relative -left-2 middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30"
-                type="button"
-              >
+        aria-expanded="false"
+        aria-haspopup="menu"
+        id=":r2:"
+        className="relative -left-2 middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30"
+        type="button"
+        onClick={showNL}
+      >
                 {showNotification &&(
-                              <span className="bg-red-500 rounded-full px-2 relative -top-3 left-2 z-50 text-white">1</span>
-
+                  <>
+                              <span className="bg-red-500 rounded-full px-2 relative -top-3 left-2 z-50 text-white"></span>
+                              
+                              </>
                 )}
-
+                {isListening && (
+                  <div class="bg-white text-black border z-10 w-80 relative right-56 top-10 rounded-lg shadow-xl h-20 ">
+                              
+                            
+                              
+                              <div class="relative top-4 ">
+                                  <h4 class="font-bold  flex justify-start  pl-4">New Reservation</h4>
+                                  <p class="font-semibold  flex justify-start  pl-4 pt-1">Check Reservation List Please</p>
+                              </div>
+                            </div>
+                )}
+                              
+                          
                 <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -573,11 +552,6 @@ const stat = Cookies.get("stationId")
         </div>
       )}
 
-{Availability && (
-        <div>
-          <Available />
-        </div>
-      )}
 
 
 {Reservation && (

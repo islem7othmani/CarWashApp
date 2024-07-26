@@ -82,17 +82,7 @@ export default function CarCard({ car, onEdit }) {
 
   return (
     <>
-     <div>
-  <button
-        type="button"
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    
-  </div>
+   
       <div className="w-72 h-96 relative top-10 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
         <a href="#">
           <img
@@ -118,23 +108,24 @@ export default function CarCard({ car, onEdit }) {
                   {car.version}
                 </p>
               </del>
-              <div className="space-y-2 space-x-2">
-                <button className="bg-gray-200 rounded-lg py-1 px-2" onClick={showForm}>
+              
+            </div>
+          
+          </div>
+        </a>
+        <div className="w-full flex justify-center ">
+                <button className="bg-blue-500 rounded-lg text-white w-11/12 flex justify-center py-1 font-semibold mb-1 " onClick={showForm}>
                   Update
                 </button>
+                </div>
+                <div className='w-full flex justify-center'>
                 <button
-                  className="rounded-xl border py-1 px-3"
+                  className="bg-red-500 rounded-lg text-white  w-11/12 flex justify-center py-1 font-semibold pb-1"
                   onClick={deleteCar}
                 >
                   Delete
                 </button>
               </div>
-            </div>
-            <button className='w-full bg-blue-500 rounded-xl text-white py-1 px-4 relative top-2'>
-              Add to lavage
-            </button>
-          </div>
-        </a>
       </div>
 
       {popup && (

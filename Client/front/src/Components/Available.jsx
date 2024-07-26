@@ -23,9 +23,8 @@ export default function Available() {
 
   return (
     <>
-      <div className="fixed left-1/3">
-        <div className="space-y-2">
-          <span className="font-semibold text-xl">Set Availability:</span>
+      <div className="">
+        <div className="space-y-2 flex gap-2">
           <div>
             <label className="inline-flex items-center cursor-pointer">
               <input 
@@ -41,7 +40,7 @@ export default function Available() {
             </label>
           </div>
         </div>
-        <h2>Admin Component</h2>
+   
         
       </div>
     </>

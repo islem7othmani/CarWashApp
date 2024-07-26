@@ -301,7 +301,10 @@ const [showreserv,setShowreserv]=useState(false)
 
   const [showCar, setShowCar] = useState(false);
   const showCars = () => {
+
     setShowCar(true);
+
+    fetchCarData(storedUser);
   };
   
   const disabledDateTimes = [
@@ -373,7 +376,29 @@ const [showreserv,setShowreserv]=useState(false)
 
 
 
-
+  const fetchCarData = async (storedUser) => {
+    //console.log(`Fetching car data for user ID: ${storedUser}`);
+    try {
+      const response = await fetch(`http://localhost:8000/car/getcarByUser/${storedUser}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    
+      if (!response.ok) {
+        throw new Error("Network response was not ok."); 
+      }
+    
+      const cars = await response.json();
+    //  //console.log("Fetched cars data:", cars);
+      setCarsdata(cars);
+      //console.log("riehgk",carsdata)
+    } catch (error) {
+      //console.error("Error fetching car data:", error);
+      setError("Error fetching car data: " + error.message);
+    }
+    };
 
 
 
@@ -463,32 +488,9 @@ const handleReservationSubmit = async (e) => {
 const storedUser = Cookies.get("user");
 //console.log("Stored user:", storedUser); // Log the stored cookie value
 const [color,setColor]=useState("blue")
-const fetchCarData = async (userId) => {
-//console.log(`Fetching car data for user ID: ${userId}`);
-try {
-  const response = await fetch(`http://localhost:8000/car/getcarByUser/${userId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
 
-  if (!response.ok) {
-    throw new Error("Network response was not ok.");
-  }
 
-  const cars = await response.json();
-//  //console.log("Fetched cars data:", cars);
-  setCarsdata(cars);
-  //console.log("riehgk",carsdata)
-} catch (error) {
-  //console.error("Error fetching car data:", error);
-  setError("Error fetching car data: " + error.message);
-}
-};
-
-  fetchCarData(storedUser);
+  
 
   const [selectedCarId, setSelectedCarId] = useState(null);
 

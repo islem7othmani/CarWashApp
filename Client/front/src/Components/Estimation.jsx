@@ -148,7 +148,7 @@ const Estimation = ({ user }) => {
   return (
     <div className='flex'>
       <div className='w-96'></div>
-      <div className='bg-gray-50 p-4 relative w-screen pl-6 space-y-6'>
+      <div className='bg-gray-50 p-4 relative w-screen pl-6 h-screen space-y-6'>
         <a className="relative left-0 bg-gray-900 block p-6 border border-gray-100 rounded-lg" href="#">
           <span className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
           <div className="my-4 space-y-1">
