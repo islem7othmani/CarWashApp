@@ -1,7 +1,8 @@
 const { addCar, getCar,getCarByUser, deleteCar, updateCar } = require("../Controllers/Car.controller")
 const authenticateUser = require('../MiddleWares/AuthUser');  
-
+const multer = require('multer');
 const route = require ("express").Router();
+
 
 
 route.post('/addCar', authenticateUser, addCar);

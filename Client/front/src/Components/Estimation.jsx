@@ -18,12 +18,24 @@ const Estimation = ({ user }) => {
     [1, 0, 0],  // 1 car, interne wash, small
     [2, 1, 1],  // 2 cars, externe wash, medium
     [3, 2, 2],  // 3 cars, interneexterne wash, large
+    [1, 0, 1],  // 1 car, interne wash, small
+    [2, 1, 0],  // 2 cars, externe wash, medium
+    [3, 2, 0],  // 3 cars, interneexterne wash, large
+    [1, 0, 2],  // 1 car, interne wash, small
+    [2, 1, 2],  // 2 cars, externe wash, medium
+    [3, 2, 1],  // 3 cars, interneexterne wash, large
   ]);
 
   const [outputData, setOutputData] = useState([
     [5],  // Wait time for 1 car, interne wash, small
     [15], // Wait time for 2 cars, externe wash, medium
     [30], // Wait time for 3 cars, interneexterne wash, large
+    [60],  // Wait time for 1 car, interne wash, small
+    [70], // Wait time for 2 cars, externe wash, medium
+    [80], // Wait time for 3 cars, interneexterne wash, large
+    [100],  // Wait time for 1 car, interne wash, small
+    [120], // Wait time for 2 cars, externe wash, medium
+    [150], // Wait time for 3 cars, interneexterne wash, large
   ]);
 
   useEffect(() => {
@@ -77,6 +89,12 @@ const Estimation = ({ user }) => {
     waittimeSI: outputData[0][0] || "",
     waittimeME: outputData[1][0] || "",
     waittimeLIE: outputData[2][0] || "",
+      waittimeSI1: outputData[0][0] || "",
+    waittimeME1: outputData[1][0] || "",
+    waittimeLIE1: outputData[2][0] || "",
+    waittimeSI2: outputData[0][0] || "",
+    waittimeME2: outputData[1][0] || "",
+    waittimeLIE2: outputData[2][0] || "",
     station: "",
     
   });
@@ -116,7 +134,7 @@ const Estimation = ({ user }) => {
       return;
     }
 
-    if (!inputValue.nbr || !inputValue.waittimeSI || !inputValue.waittimeME || !inputValue.waittimeLIE) {
+    if (!inputValue.nbr || !inputValue.waittimeSI || !inputValue.waittimeME || !inputValue.waittimeLIE || !inputValue.waittimeSI1 || !inputValue.waittimeME1 || !inputValue.waittimeLIE1 || !inputValue.waittimeSI2 || !inputValue.waittimeME2 || !inputValue.waittimeLIE2) {
       alert('Please enter all required fields.');
       return;
     }
@@ -197,6 +215,67 @@ const Estimation = ({ user }) => {
                 className='ml-2 rounded-xl py-2 px-8 shadow-xl'
               />
             </div>
+            <div className='mt-2'>
+              <span>Wait Time for 1 Car, Interne Wash, Small Car (SI):</span>
+              <input
+                type="number"
+                name="waittimeSI1"
+                value={inputValue.waittimeSI1}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
+            </div>
+            <div className='mt-2'>
+              <span>Wait Time for 2 Cars, Externe Wash, Medium Car (ME):</span>
+              <input
+                type="number"
+                name="waittimeME1"
+                value={inputValue.waittimeME1}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
+            </div>
+            <div className='mt-2'>
+              <span>Wait Time for 3 Cars, Interneexterne Wash, Large Car (LIE):</span>
+              <input
+                type="number"
+                name="waittimeLIE1"
+                value={inputValue.waittimeLIE1}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
+            </div>
+            <div className='mt-2'>
+              <span>Wait Time for 1 Car, Interne Wash, Small Car (SI):</span>
+              <input
+                type="number"
+                name="waittimeSI2"
+                value={inputValue.waittimeSI2}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
+            </div>
+            <div className='mt-2'>
+              <span>Wait Time for 2 Cars, Externe Wash, Medium Car (ME):</span>
+              <input
+                type="number"
+                name="waittimeME2"
+                value={inputValue.waittimeME2}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
+            </div>
+            <div className='mt-2'>
+              <span>Wait Time for 3 Cars, Interneexterne Wash, Large Car (LIE):</span>
+              <input
+                type="number"
+                name="waittimeLIE2"
+                value={inputValue.waittimeLIE2}
+                onChange={handleInputChange}
+                className='ml-2 rounded-xl py-2 px-8 shadow-xl'
+              />
+            </div>
+            
           </div>
           <div className="flex justify-center">
               <button onClick={handleAddCar} className="px-2 py-1 text-white w-80 bg-gray-800 relative top-10 border border-gray-200 font-semibold rounded hover:bg-gray-400  ">Update</button>

@@ -118,6 +118,7 @@ const ReservList = () => {
   // Pagination logic
   const indexOfLastReservation = currentPage * reservationsPerPage;
   const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+  reservations.reverse()
   const currentReservations = reservations.slice(
     indexOfFirstReservation,
     indexOfLastReservation
@@ -127,7 +128,7 @@ const ReservList = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
+console.log("rggg",reservations.reverse())
  // Function to get current time
 
 // Function to get the current time

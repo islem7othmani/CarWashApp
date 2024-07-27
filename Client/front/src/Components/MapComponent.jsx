@@ -3,20 +3,27 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import L from "leaflet";
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconRetina from "leaflet/dist/images/marker-icon-2x.png";
-import shadow from "leaflet/dist/images/marker-shadow.png";
-import website from "../Images/website.png";
 import Cookies from "js-cookie";
 import Navbar from './Navbar'
 import { useParams } from 'react-router-dom';  // Import useParams from react-router-dom
 import { useLocation } from 'react-router-dom';
 
-// Fix the marker icon issue in Leaflet
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: iconRetina,
-  iconUrl: icon,
-  shadowUrl: shadow,
+// Custom red icon for "You're here" marker
+const redIcon = new L.DivIcon({
+  className: 'red-marker',
+  html: '<div style="background-color: red; width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px rgba(0,0,0,0.5);"></div>',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+// Custom blue icon for stations
+const blueIcon = new L.DivIcon({
+  className: 'blue-marker',
+  html: '<div style="background-color: blue; width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px rgba(0,0,0,0.5);"></div>',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
 });
 
 const MapComponent = () => {
@@ -28,6 +35,7 @@ const MapComponent = () => {
   const queryParams = new URLSearchParams(search);
   const userId2 = queryParams.get('userId');
   console.log('User ID2:', userId2);
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords;
@@ -41,27 +49,26 @@ const MapComponent = () => {
     });
   }, []);
 
-  console.log("your current postion", position);
-  const pos = Cookies.set("position", position);
+  console.log("your current position", position);
+  Cookies.set("position", position);
 
   return (
     <>
-   
       <MapContainer
         center={position}
         zoom={13}
         style={{ height: "100vh", width: "100%" }}
-        className="relative z-0 "
+        className="relative z-0"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={position}>
+        <Marker position={position} icon={redIcon}>
           <Popup>You are here</Popup>
         </Marker>
         {stations.map((station) => (
-          <Marker key={station.id} position={[station.lat, station.lon]}>
+          <Marker key={station.id} position={[station.lat, station.lon]} icon={blueIcon}>
             <Popup>
               {station.tags && station.tags.name
                 ? station.tags.name
@@ -71,7 +78,7 @@ const MapComponent = () => {
           </Marker>
         ))}
       </MapContainer>
-      <div className="overflow-y-scroll  bg-white shadow-xl rounded-xl  h-screen absolute w-1/3 z-10 top-0">
+      <div className="overflow-y-scroll bg-white shadow-xl rounded-xl h-screen absolute w-1/3 z-10 top-0">
         <h1 className="font-semibold text-2xl relative top-2 left-4 pb-4">
           Results
         </h1>
@@ -79,9 +86,9 @@ const MapComponent = () => {
           <div
             key={station.id}
             position={[station.lat, station.lon]}
-            className=" h-80 border w-full  py-4 px-5"
+            className="h-80 border w-full py-4 px-5"
           >
-            <div className="relative top-2 left-4 ">
+            <div className="relative top-2 left-4">
               <span className="font-bold text-xl">
                 {station.tags && station.tags.name
                   ? station.tags.name
@@ -131,8 +138,9 @@ const MapComponent = () => {
           </div>
         ))}
       </div>
-      <a href={`/reservation/${userId}`} className='absolute bottom-0 z-50 w-1/3 bg-blue-900 rounded-lg shadow-xl py-3 px-3 text-white font-semibold text-xl flex justify-center pointer-cursor '>Get Reservation</a>
-
+      <a href={`/reservation/${userId}`} className='absolute bottom-0 z-50 w-1/3 bg-blue-900 rounded-lg shadow-xl py-3 px-3 text-white font-semibold text-xl flex justify-center pointer-cursor'>
+        Get Reservation
+      </a>
     </>
   );
 };

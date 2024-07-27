@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -58,16 +59,29 @@ const [reservationDetails, setReservationDetails] = useState({
   const washTypeMap = { interne: 0, externe: 1, interneexterne: 2 };
   const sizeMap = { small: 0, medium: 1, large: 2 };
 
+ 
   const [trainingData, setTrainingData] = useState([
     [1, 0, 0],  // 1 car, interne wash, small
-    [1, 1, 1],  // 2 cars, externe wash, medium
-    [1, 2, 2],  // 3 cars, interneexterne wash, large
+    [2, 1, 1],  // 2 cars, externe wash, medium
+    [3, 2, 2],  // 3 cars, interneexterne wash, large
+    [1, 0, 1],  // 1 car, interne wash, medium
+    [2, 1, 0],  // 2 cars, externe wash, small
+    [3, 2, 0],  // 3 cars, interneexterne wash, small
+    [1, 0, 2],  // 1 car, interne wash, large
+    [2, 1, 2],  // 2 cars, externe wash, large
+    [3, 2, 1],  // 3 cars, interneexterne wash, medium
   ]);
 
   const [outputData, setOutputData] = useState([
-    [0],  // Wait time for 1 car, interne wash, small
-    [0], // Wait time for 2 cars, externe wash, medium
-    [0], // Wait time for 3 cars, interneexterne wash, large
+    [5],   // Wait time for 1 car, interne wash, small
+    [15],  // Wait time for 2 cars, externe wash, medium
+    [30],  // Wait time for 3 cars, interneexterne wash, large
+    [40],  // Wait time for 1 car, interne wash, medium
+    [60],  // Wait time for 2 cars, externe wash, small
+    [90],  // Wait time for 3 cars, interneexterne wash, small
+    [120], // Wait time for 1 car, interne wash, large
+    [150], // Wait time for 2 cars, externe wash, large
+    [160], // Wait time for 3 cars, interneexterne wash, medium
   ]);
 
   // Extract latitude and longitude from cookie data
@@ -176,14 +190,22 @@ const [reservationDetails, setReservationDetails] = useState({
         // Get the last object in the array
         const lastObject = data[data.length - 1];
         //console.log('Last object data:', lastObject);
-      
+      console.log(lastObject)
         // Extract the relevant properties from the last object
         const x = [
           [lastObject.waittimeSI],
           [lastObject.waittimeME],
           [lastObject.waittimeLIE],
+          [lastObject.waittimeSI1],
+          [lastObject.waittimeME1],
+          [lastObject.waittimeLIE1],
+          [lastObject.waittimeSI2],
+          [lastObject.waittimeME2],
+          [lastObject.waittimeLIE2],
         ];
+        console.log(x)
         setOutputData(x);
+        console.log(outputData)
         setNbrl(lastObject.nbr);
         setStatId(lastObject.station)
 
@@ -492,15 +514,16 @@ const [color,setColor]=useState("blue")
 
   
 
-  const [selectedCarId, setSelectedCarId] = useState(null);
+const [selectedCarId, setSelectedCarId] = useState(null);
+const [selectedImage,setSelectedImage] = useState(null);
+const getCar = (id,image) => {
+  // Set cookie with the selected car ID
+  Cookies.set("carselected", id, { expires: 7 });
 
-  const getCar = (id) => {
-    // Set cookie with the selected car ID
-    Cookies.set("carselected", id, { expires: 7 });
-
-    // Update the selected car ID
-    setSelectedCarId(id);
-  };
+  // Update the selected car ID
+  setSelectedCarId(id);
+  setSelectedImage(image)
+};
 
 
 //fetchReservationsById('66914f58c7f5559bdcd6bd61')
@@ -761,8 +784,9 @@ const [color,setColor]=useState("blue")
     </div>
             <br />
             </div>
-            <div>
-            <span onClick={showCars} className="mb-2 border border-blue-500  border-dashed py-4 px-4 text-blue-500 cursor-pointer hover:bg-gray-100 ">+ Select Car</span>
+            <div className="flex gap-3 ">
+            <span onClick={showCars} className=" border border-blue-500  border-dashed py-4 px-4 text-blue-500 cursor-pointer hover:bg-gray-100 ">+ Select Car</span>
+            <img src={selectedImage} alt="" className="h-14" />
             </div>
             <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl relative top-4 text-white">Submit Reservation</button>
           </form>
@@ -807,54 +831,58 @@ const [color,setColor]=useState("blue")
 
             {error && <p className="text-red-600">{error}</p>}
 
-<div className="relative overflow-x-auto">
-  <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-      <tr>
-        <th scope="col" className="px-6 py-3">Car</th>
-        <th scope="col" className="px-6 py-3">Mark</th>
-        <th scope="col" className="px-6 py-3">Select</th>
-      </tr>
-    </thead>
-    <tbody>
-      {carsdata.length > 0 ? (
-        carsdata.map((car, index) => (
-          <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <th scope="row" className="px-6 py-4 font-medium text-gray-900  whitespace-nowrap dark:text-white">
-              <img src={car.image} alt="" className="w-56  shadow-xl " />
-            </th>
-            <td className="px-6 py-4 font-bold">{car.model}</td>
-            <td className="px-6 py-4">
-            <button
-          key={car._id}
-          className={`font-semibold ${selectedCarId === car._id ? 'bg-green-500' : 'bg-blue-500'} rounded-lg py-2 px-5 text-white`}
-          onClick={() => getCar(car._id)}
-        >
-          Select
-        </button>        </td>
+            <div className="relative overflow-x-auto max-h-96 overflow-y-auto">
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-6 py-3">Car</th>
+            <th scope="col" className="px-6 py-3">Mark</th>
+            <th scope="col" className="px-6 py-3">Select</th>
           </tr>
-        ))
-      ) : (
-        <tr>
-          <td colSpan="3" className="px-6 py-4 text-center">No cars available</td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-</div>
+        </thead>
+        <tbody>
+          {carsdata.length > 0 ? (
+            carsdata.map((car, index) => (
+              <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <img src={car.image} alt="" className="w-56 shadow-xl" />
+                </th>
+                <td className="px-6 py-4 font-bold">{car.model}</td>
+                <td className="px-6 py-4">
+                  <button
+                    key={car._id}
+                    className={`font-semibold ${selectedCarId === car._id ? 'bg-green-500' : 'bg-blue-500'} rounded-lg py-2 px-5 text-white`}
+                    onClick={() => getCar(car._id, car.image)}
+                  >
+                    Select
+                  </button>
+                  
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3" className="h-48">
+                <div className="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute left-72 bottom-20"></div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
 
      </div>
 
 
      <button
-        type="button"
-        onClick={() => setShowCar(false)}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+            type="button"
+            onClick={() => setShowCar(false)}
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
      </div>
      </div>
      </>

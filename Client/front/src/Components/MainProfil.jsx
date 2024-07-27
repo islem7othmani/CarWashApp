@@ -94,7 +94,7 @@ export default function MainProfil() {
         },
         body: JSON.stringify(carData),
       });
-
+      window.location.reload(); 
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
@@ -194,7 +194,7 @@ export default function MainProfil() {
   <div className="grid grid-cols-3 space-x-4 space-y-4 ">
     <button
       onClick={showform}
-      className="rounded-xl hover:bg-gray-100 border border-dashed text-blue-500 font-semibold border-blue-500 relative top-12 h-96"
+      className="rounded-xl hover:bg-gray-100 border border-dashed text-blue-500 font-semibold border-blue-500 relative w-72 top-12 h-96"
     >
       Add Car
     </button>
@@ -240,7 +240,7 @@ export default function MainProfil() {
           type="text"
           placeholder="Image"
           name="image"
-          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2 pt-2"
         />
         <input
           onChange={handleInputChange}
