@@ -14,6 +14,8 @@ import Reservation from "./Components/Reservation";
 import Position from "./Components/Position"; 
 import Calender from "./Components/Calender"; 
 import MyReservation from "./Components/MyReserv"; 
+import StationInfos from "./Components/StationInfos";
+
 
 
 function App() {
@@ -37,6 +39,7 @@ function App() {
       <Route path="/Position" element={<Position/>} /> 
       <Route path="/calender" element={<Calender/>} /> 
       <Route path="/MyReservation/:userId" element={<MyReservation/>} /> 
+      <Route path="/StationData" element={<StationInfos/>} /> 
       </Routes>
     </Router>
    

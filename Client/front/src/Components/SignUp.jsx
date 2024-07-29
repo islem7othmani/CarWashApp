@@ -31,6 +31,8 @@ export default function SignUp() {
 
 
   Cookies.set("admin", postData.isAdmin, { expires: 7 }); 
+  const isAdmin1 = Cookies.get("admin");
+
   const allgood = () => {
     // Check if all required fields are filled
     if (postData.phone !== "" && postData.username !== "" && postData.password !== "" && postData.email !== "" ) {

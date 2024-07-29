@@ -5,6 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 
+
+
 export default function Login() {
 
   const [loginData, setLoginData] = useState({
@@ -76,7 +78,7 @@ export default function Login() {
       Cookies.set("isadmin",result.user.isAdmin,  { expires: 7 })
       
       if (result.user.isAdmin) {
-        navigate("/admin");
+        navigate("/StationData");
     } else {
         navigate("/home");
     }
@@ -99,6 +101,8 @@ export default function Login() {
   };
 
    
+
+  
   
 
   // Navigate to the password reset page

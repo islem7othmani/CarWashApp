@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Informations from './Informations';
+import { useNavigate } from 'react-router-dom';
 
 const StationInfos = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const StationInfos = () => {
     state: '',
     postCode: '',
   });
+  const navigate = useNavigate();
 
   const [infos, setInfos] = useState(false); // State to manage form visibility
   const [loading, setLoading] = useState(false); // State for loading spinner
@@ -173,6 +175,7 @@ console.log("yyyyyyyyy")
         position: 'top-right',
         autoClose: 3000,
       });
+      navigate("/admin")
     } catch (error) {
       console.error('Error adding station:', error.message);
       toast.error('Error adding station: ' + error.message, {

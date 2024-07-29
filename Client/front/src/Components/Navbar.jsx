@@ -123,16 +123,16 @@ useEffect(() => {
   socket.on("getReminder", async (message3) => {
     try {
       // Wait for fetchReservationsById to complete
-      await fetchReservationsById(message3);
+     // await fetchReservationsById(message3);
   
       // Wait for 1 minute (60000 milliseconds)
-      await delay(60000);
+    //   delay(6000);
   
       // Log userId
       console.log(userId);
   
       // Check the condition
-      if (userId === cookieUser) {
+      if (message3 === cookieUser) {
         console.log("Received reminder:", message3);
         setShowNotification3(true);
       }
