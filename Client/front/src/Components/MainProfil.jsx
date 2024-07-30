@@ -2,12 +2,13 @@ import { React, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import CarCard from "./CarCard";
 import Admin from "./Admin";
-
+import Profile from "../Images/profile.mp4";
 export default function MainProfil() {
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
   const [carsdata, setCarsdata] = useState([]);
   const [error, setError] = useState("");
+  const [imagePreview, setImagePreview] = useState(null); // State for image preview
 
   useEffect(() => {
     // Get email from cookies
@@ -40,10 +41,10 @@ export default function MainProfil() {
 
       const userData = await response.json();
       setUser(userData);
-     // console.log("user data", userData);
-    //  console.log(user);
-    
-  Cookies.set("user", userData._id, { expires: 7 }); 
+      // console.log("user data", userData);
+      //  console.log(user);
+
+      Cookies.set("user", userData._id, { expires: 7 });
     } catch (error) {
       setError("Error fetching user data: " + error.message);
     }
@@ -56,20 +57,30 @@ export default function MainProfil() {
   const closeForm = () => {
     console.log("Close button clicked");
     setPopup(false);
+    setImagePreview(null); // Reset image preview on close
   };
 
   const handleInputChange = (e) => {
-    setCarData({
-      ...carData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value, files } = e.target;
+    if (files) {
+      setCarData((prevData) => ({
+        ...prevData,
+        [name]: files[0],
+      }));
+      setImagePreview(URL.createObjectURL(files[0])); // Set image preview
+    } else {
+      setCarData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
   const [carData, setCarData] = useState({
     carname: "",
     model: "",
     version: "",
     marque: "",
-    image:"",
+    image: "",
     user: "",
   });
   useEffect(() => {
@@ -86,189 +97,206 @@ export default function MainProfil() {
     e.preventDefault();
     try {
       const token = Cookies.get("token");
+      const formData = new FormData();
+      for (const key in carData) {
+        formData.append(key, carData[key]);
+      }
+
       const response = await fetch("http://localhost:8000/car/addCar", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(carData),
+        body: formData,
       });
-      window.location.reload(); 
+
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
-      // Handle successful car addition if needed
+
+      window.location.reload();
     } catch (error) {
       setError("Error adding car: " + error.message);
     }
   };
 
   // car data
-    const fetchCarData = async (userId) => {
-      try {
-          const response = await fetch(`http://localhost:8000/car/getcarByUser/${userId}`, {
-              method: "GET",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              credentials: "include",
-          });
+  const fetchCarData = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/car/getcarByUser/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
-          if (!response.ok) {
-              throw new Error("Network response was not ok.");
-          }
-
-          const cars = await response.json();
-          setCarsdata(cars);
-          console.log(cars)
-      } catch (error) {
-          setError("Error fetching user data: " + error.message);
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
       }
+
+      const cars = await response.json();
+      setCarsdata(cars);
+      console.log(cars);
+    } catch (error) {
+      setError("Error fetching user data: " + error.message);
+    }
   };
 
   useEffect(() => {
-      if (user && user._id) {
-          fetchCarData(user._id);
-      }
+    if (user && user._id) {
+      fetchCarData(user._id);
+    }
   }, [user]);
-
-
-
-
-
-
-
-
-  
 
   return (
     <>
+      <div className="relative top-6">
+        <img
+          src="https://i.pinimg.com/564x/6b/9d/75/6b9d75569b9b2f49967153b03afdac47.jpg"
+          alt="Background"
+          className="w-screen h-60"
+        />
+      </div>
 
-<div className="relative top-6">
-  <img
-    src="https://i.pinimg.com/564x/6b/9d/75/6b9d75569b9b2f49967153b03afdac47.jpg"
-    alt="Background"
-    className="w-screen h-60"
-  />
-</div>
+      <div className=" flex flex-wrap justify-center">
+        <div className="h-96 w-64 rounded-xl shadow-xl relative -top-10 bg-white z-50  ">
+          {user ? (
+            <div className="bg-white pt-4 rounded-xl">
+              <div className="relative left-12 bottom-8 ml-2">
+                <video
+                  className="w-36 h-36 rounded-full absolute"
+                  src={Profile}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  alt="Profile Video"
+                />
 
-<div className="flex justify-center">
-  <div className="h-96 w-64 rounded-xl shadow-xl relative -top-10 bg-white z-50 -left-12">
-    {user ? (
-      <div className="bg-white pt-4 rounded-xl">
-        <div className="relative left-20 ml-2">
-          <img
-            className="w-20 h-20 rounded-full absolute"
-            src={
-              user.profilepic ||
-              "https://ntrepidcorp.com/wp-content/uploads/2016/06/team-1-640x640.jpg"
-            }
-            alt="Profile"
-          />
-          <div className="w-20 h-20 group hover:bg-gray-200 opacity-60 rounded-full absolute flex justify-center items-center cursor-pointer transition duration-500">
-            <img
-              className="hidden group-hover:block w-6"
-              src="https://www.svgrepo.com/show/33565/upload.svg"
-              alt="Upload"
-            />
-          </div>
+                <div className="w-20 h-20 group hover:bg-gray-200 opacity-60 rounded-full absolute  flex justify-center items-center cursor-pointer transition duration-500">
+                  <img
+                    className="hidden group-hover:block w-6"
+                    src="https://www.svgrepo.com/show/33565/upload.svg"
+                    alt="Upload"
+                  />
+                </div>
+              </div>
+
+              <div className="relative top-20 pt-4">
+                <h1 className="flex justify-center pt-2 font-bold text-xl pb-6">
+                  {user.username}
+                </h1>
+              </div>
+
+              <div className="font-medium text-lg relative top-20">
+                <p className="flex justify-center">{user.email}</p>
+                <p className="flex justify-center">{user.phone}</p>
+              </div>
+            </div>
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
 
-        <div className="relative top-20">
-          <h1 className="flex justify-center pt-2 font-bold text-xl pb-6">
-            {user.username}
-          </h1>
-        </div>
+        <div className="grid xl:grid-cols-3 lg:grid-cols-2 sm:grid-cols-2 space-x-4 space-y-4 ">
+          <button
+            onClick={showform}
+            className="rounded-xl hover:bg-gray-100 border border-dashed text-blue-500 font-semibold border-blue-500 relative w-72 left-4 top-12 h-96"
+          >
+            Add Car
+          </button>
 
-        <div className="font-medium text-lg relative top-20">
-          <p className="flex justify-center">{user.email}</p>
-          <p className="flex justify-center">{user.phone}</p>
+          {carsdata.map((car, index) => (
+            <CarCard key={index} car={car} carData={carData} />
+          ))}
         </div>
       </div>
-    ) : (
-      <p>Loading...</p>
-    )}
-  </div>
 
-  <div className="grid grid-cols-3 space-x-4 space-y-4 ">
-    <button
-      onClick={showform}
-      className="rounded-xl hover:bg-gray-100 border border-dashed text-blue-500 font-semibold border-blue-500 relative w-72 top-12 h-96"
-    >
-      Add Car
-    </button>
-
-    {carsdata.map((car, index) => (
-      <CarCard key={index} car={car} carData={carData} />
-    ))}
-  </div>
-</div>
-
-{popup && (
-  <div
-    id="default-modal"
-    className="bg-black bg-opacity-75 h-screen w-full fixed top-0 left-0 z-50 flex justify-center items-center"
-  >
-    <div className="relative p-4 w-full max-w-2xl max-h-full bg-white rounded-lg shadow">
-      <button
-        onClick={closeForm}
-        className="absolute right-6 top-2 z-50"
-      >
-        X
-      </button>
-      <form
-        className="py-20 relative left-28 space-y-2"
-        onSubmit={addCar}
-      >
-        <input
-          onChange={handleInputChange}
-          type="text"
-          placeholder="Car Name"
-          name="carname"
-          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
-        />
-        <input
-          onChange={handleInputChange}
-          type="text"
-          placeholder="Mark"
-          name="marque"
-          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
-        />
-        <input
-          onChange={handleInputChange}
-          type="text"
-          placeholder="Image"
-          name="image"
-          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2 pt-2"
-        />
-        <input
-          onChange={handleInputChange}
-          type="text"
-          placeholder="Model"
-          name="model"
-          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
-        />
-        <input
-          onChange={handleInputChange}
-          type="text"
-          placeholder="Version"
-          name="version"
-          className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
-        />
-
-        <button
-          type="submit"
-          className="relative top-4 py-2 px-36 left-5 rounded-full shadow-xl font-bold text-white"
-          style={{ backgroundColor: "#A2A8D3" }}
+      {popup && (
+        <div
+          id="default-modal"
+          className="bg-black bg-opacity-75 h-screen w-full fixed top-0 left-0 z-50 flex justify-center items-center"
         >
-          Add Car
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+          <button
+            type="button"
+            onClick={closeForm}
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div className="relative p-4 w-full max-w-2xl max-h-full bg-white rounded-lg shadow">
+            <form
+              className="py-20 relative left-28 space-y-2"
+              onSubmit={addCar}
+              encType="multipart/form-data"
+            >
+              <h1 className="font-semibold text-xl text-blue-500 relative bottom-5">
+                Enter Informations About The Car
+              </h1>
+              <input
+                onChange={handleInputChange}
+                type="text"
+                placeholder="Mark"
+                name="carname"
+                className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+              />
+              <input
+                onChange={handleInputChange}
+                type="file"
+                placeholder="Image"
+                name="image"
+                className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2 pt-2"
+              />
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Image Preview"
+                  className="w-20 h-20 mt-4"
+                />
+              )}
+              <input
+                onChange={handleInputChange}
+                type="text"
+                placeholder="Model"
+                name="model"
+                className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+              />
+              <input
+                onChange={handleInputChange}
+                type="text"
+                placeholder="Version"
+                name="version"
+                className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+              />
 
+              <button
+                type="submit"
+                className="relative top-4 py-2 px-36 left-2 rounded-full shadow-xl font-bold text-white"
+                style={{ backgroundColor: "#A2A8D3" }}
+              >
+                Add Car
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

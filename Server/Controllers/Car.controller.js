@@ -2,9 +2,41 @@ const mongoose = require("mongoose");
 const Car = require("../Models/Car.model");
 const User = require("../Models/User.model");
 
+const multer = require('multer');
+const path = require('path');
+
+
+
+
+
+
+
+
+const uploadDirectory = path.join(__dirname, '../uploads');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDirectory); // Ensure the directory exists
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Specify the file name
+  },
+});
+
+const upload = multer({ storage: storage });
+
+
+
 const addCar = async (req, res) => {
   try {
-    const { carname, model, version, marque, image } = req.body;
+    console.log("Request Body:", req.body);
+    console.log("Uploaded File Path:", req.file?.path); // Check the file path
+
+    const { carname, model, version, marque } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ error: "Image file is required" });
+    }
+    const image = req.file.path;
 
     const newCar = new Car({
       carname,
@@ -91,19 +123,29 @@ const deleteCar = async (req, res) => {
 
 
 const updateCar = async (req, res) => {
-	const id = req.params.id;
-	try {
-		const updatedCar = await Car.findByIdAndUpdate(
-			id,
-			req.body,
-			{
-				new: true,
-			}
-		);
-		return res.status(200).json(updatedCar);
-	} catch (err) {
-		return res.status(500).json(err);
-	}
+  const id = req.params.id;
+
+  try {
+    // Handle file upload
+    const image = req.file ? req.file.filename : null;
+
+    // Create the update object
+    const updateData = {
+      ...req.body,
+    };
+
+    // Add image to the update object if exists
+    if (image) {
+      updateData.image = `http://localhost:8000/uploads/${image}`;
+    }
+
+    const updatedCar = await Car.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+    return res.status(200).json(updatedCar);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
 
@@ -112,5 +154,6 @@ module.exports = {
   getCar,
   getCarByUser,
   deleteCar,
-  updateCar
+  updateCar,
+  upload
 };

@@ -12,11 +12,27 @@ export default function CarCard({ car, onEdit }) {
     image: car.image || '',
   });
 
+  const [imageFile, setImageFile] = useState(null);
+
+  const extractFileName = (path) => {
+    return path.split('\\').pop().split('/').pop();
+  };
+
+  const fileName = extractFileName(car.image);
+
   // Handle input change for the update form
   const handleInputChange = (e) => {
     setCarData1({
       ...carData1,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+    setCarData1({
+      ...carData1,
+      image: e.target.files[0].name,
     });
   };
 
@@ -47,13 +63,21 @@ export default function CarCard({ car, onEdit }) {
     e.preventDefault();
     try {
       const token = Cookies.get('token');
+      const formData = new FormData();
+      formData.append('carname', carData1.carname);
+      formData.append('model', carData1.model);
+      formData.append('version', carData1.version);
+      formData.append('marque', carData1.marque);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
       const response = await fetch(`http://localhost:8000/car/updateCar/${car._id}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(carData1),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -101,7 +125,7 @@ export default function CarCard({ car, onEdit }) {
       <div className="w-72 h-96 relative top-10 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
         <a href="#">
           <img
-            src={car.image}
+            src={`http://localhost:8000/uploads/${fileName}`}
             alt="Product"
             className="h-56 w-72 object-cover rounded-t-xl"
           />
@@ -134,46 +158,41 @@ export default function CarCard({ car, onEdit }) {
       {popup && (
         <div
           id="default-modal"
-          className="bg-black bg-opacity-75 h-screen w-full fixed top-0 -left-4 z-50 justify-center items-center"
+          className="bg-black bg-opacity-75 h-screen w-full fixed -top-4 -left-4 z-50 justify-center items-center"
         >
+              <button
+  type="button"
+  onClick={closeForm}
+  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+</button>
           <div className="relative p-4 top-12 left-1/4 w-full max-w-2xl max-h-full">
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-              <button
-                type="button"
-                onClick={closeForm}
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+        
+
               <form
                 className="py-20 relative left-28 space-y-2"
                 onSubmit={updateCar}
               >
+              
+                <h1 className='font-semibold text-xl text-blue-500 relative bottom-5'>Update Car Informations</h1>
                 <input
                   value={carData1.carname}
                   onChange={handleInputChange}
                   type="text"
-                  placeholder="Car Name"
+                  placeholder="Mark"
                   name="carname"
                   className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
                 />
                 <input
-                  value={carData1.marque}
-                  onChange={handleInputChange}
-                  type="text"
-                  placeholder="Mark"
-                  name="marque"
-                  className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
-                />
-                <input
-                  value={carData1.image}
-                  onChange={handleInputChange}
-                  type="text"
+                  type="file"
                   placeholder="Image"
                   name="image"
-                  className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+                  className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2 pt-2"
+                  onChange={handleImageChange}
                 />
                 <input
                   value={carData1.model}
@@ -193,7 +212,7 @@ export default function CarCard({ car, onEdit }) {
                 />
                 <button
                   type="submit"
-                  className="relative top-4 py-2 px-36 left-5 rounded-full shadow-xl font-bold text-white"
+                  className="relative top-4 py-2 px-36 left-2 rounded-full shadow-xl font-bold text-white"
                   style={{ backgroundColor: '#A2A8D3' }}
                 >
                   Update Car

@@ -5,9 +5,20 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const { Server } = require("socket.io");
 const cookieParser = require('cookie-parser');
-
+const fs = require('fs');
+const path = require('path');
  
 const app = express();
+
+
+/*
+// Create the uploads directory if it doesn't exist
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+*/
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const corsOptions = {
