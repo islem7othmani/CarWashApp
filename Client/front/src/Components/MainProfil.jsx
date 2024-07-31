@@ -3,6 +3,9 @@ import Cookies from "js-cookie";
 import CarCard from "./CarCard";
 import Admin from "./Admin";
 import Profile from "../Images/profile.mp4";
+import mail from "../Images/mail.png";
+import phone from "../Images/telephone.png";
+
 export default function MainProfil() {
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
@@ -163,9 +166,9 @@ export default function MainProfil() {
       </div>
 
       <div className=" flex flex-wrap justify-center">
-        <div className="h-96 w-64 rounded-xl shadow-xl relative -top-10 bg-white z-50  ">
+        <div className="h-96 w-64 rounded-xl shadow-xl relative z-10 -top-10 bg-white z-50  ">
           {user ? (
-            <div className="bg-white pt-4 rounded-xl">
+            <div className="bg-white pt-4 rounded-xl ">
               <div className="relative left-12 bottom-8 ml-2">
                 <video
                   className="w-36 h-36 rounded-full absolute"
@@ -192,9 +195,15 @@ export default function MainProfil() {
                 </h1>
               </div>
 
-              <div className="font-medium text-lg relative top-20">
-                <p className="flex justify-center">{user.email}</p>
-                <p className="flex justify-center">{user.phone}</p>
+              <div className="font-medium text-lg relative top-20 ">
+                <div className="flex gap-2 relative left-6">
+                  <img src={mail} alt="mail" className="h-4" />
+                  <p className="flex text-sm justify-center">{user.email}</p>
+                </div>
+                <div className="flex gap-2 relative left-6">
+                  <img src={phone} alt="phone" className="h-4" />
+                  <p className="flex text-sm justify-center">{user.phone}</p>
+                </div>
               </div>
             </div>
           ) : (

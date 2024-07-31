@@ -51,13 +51,13 @@ const MyReserv = () => {
   return (
     <>
       <Navbar />
-      <div className="w-screen ml-12 relative top-10">
+      <div className="w-screen ml-12 relative top-10 right-8 xl:right-4">
         <h2 className="font-semibold text-xl text-blue-600 pb-4">Your Reservations</h2>
         {error && <div className="text-red-500">{error}</div>}
         {reservations.length === 0 ? (
           <div>No reservations found for this user.</div>
         ) : (
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-11/12">
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-11/12 ">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -91,36 +91,51 @@ const MyReserv = () => {
       </div>
 
       <div className="pagination flex justify-center p-4 relative top-12">
-        {currentPage > 1 && (
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="px-4 py-2 border rounded bg-white text-violet-600"
-          >
-            Previous
-          </button>
-        )}
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 border rounded ${
-              currentPage === index + 1
-                ? "bg-violet-600 text-white"
-                : "bg-white text-violet-600"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        {currentPage < totalPages && (
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="px-4 py-2 border rounded bg-white text-violet-600"
-          >
-            Next
-          </button>
-        )}
-      </div>
+  {currentPage > 1 && (
+    <button
+      onClick={() => handlePageChange(currentPage - 1)}
+      className="px-4 py-2 border rounded bg-white text-violet-600"
+    >
+      Previous
+    </button>
+  )}
+
+  {Array.from({
+    length: Math.min(5, totalPages),
+  }).map((_, index) => {
+    // Calculate the start and end page for the range
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, startPage + 4);
+
+    // Adjust startPage if there are fewer than 5 pages at the end
+    const pageNumber = index + startPage;
+    if (pageNumber > endPage) return null;
+
+    return (
+      <button
+        key={pageNumber}
+        onClick={() => handlePageChange(pageNumber)}
+        className={`px-4 py-2 border rounded ${
+          currentPage === pageNumber
+            ? "bg-violet-600 text-white"
+            : "bg-white text-violet-600"
+        }`}
+      >
+        {pageNumber}
+      </button>
+    );
+  })}
+
+  {currentPage < totalPages && (
+    <button
+      onClick={() => handlePageChange(currentPage + 1)}
+      className="px-4 py-2 border rounded bg-white text-violet-600"
+    >
+      Next
+    </button>
+  )}
+</div>
+
     </>
   );
 };

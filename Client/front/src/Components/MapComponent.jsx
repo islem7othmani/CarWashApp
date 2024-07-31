@@ -78,7 +78,7 @@ const MapComponent = () => {
           </Marker>
         ))}
       </MapContainer>
-      <div className="overflow-y-scroll bg-white shadow-xl rounded-xl h-screen absolute w-1/3 z-10 top-0">
+      <div className="overflow-y-scroll bg-white shadow-xl rounded-xl h-56 lg:h-screen xl:h-screen sm:h-80   absolute w-screen sm:w-screen lg:w-1/3 xl:w-1/3 z-10 top-3/4 sm:top-3/4 lg:top-0 xl:top-0">
         <h1 className="font-semibold text-2xl relative top-2 left-4 pb-4">
           Results
         </h1>
@@ -138,7 +138,7 @@ const MapComponent = () => {
           </div>
         ))}
       </div>
-      <a href={`/reservation/${userId}`} className='absolute bottom-0 z-50 w-1/3 bg-blue-900 rounded-lg shadow-xl py-3 px-3 text-white font-semibold text-xl flex justify-center pointer-cursor'>
+      <a href={`/reservation/${userId}`} className='absolute bottom-4 sm:bottom-4  lg:bottom-0 xl:bottom-0   z-50 w-screen sm:w-screen lg:w-1/3 xl:w-1/3 bg-blue-900 rounded-lg shadow-xl py-3 px-3 text-white font-semibold text-xl flex justify-center pointer-cursor'>
         Get Reservation
       </a>
     </>

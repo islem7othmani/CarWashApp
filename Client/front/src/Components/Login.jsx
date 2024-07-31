@@ -11,7 +11,7 @@ export default function Login() {
 
   const [loginData, setLoginData] = useState({
     email: Cookies.get("email") || "",  // Get email from cookie if it exists
-    password: Cookies.get("password") || "",   // Get password from cookie if it exists
+   // password: Cookies.get("password") || "",   // Get password from cookie if it exists
   });
 
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ export default function Login() {
 
       // Save email and password to cookies (with optional expiration)
       Cookies.set("email", loginData.email, { expires: 7 });  // Set cookie to expire in 7 days
-      Cookies.set("password", loginData.password, { expires: 7 });  // Set cookie to expire in 7 days
+     // Cookies.set("password", loginData.password, { expires: 7 });  // Set cookie to expire in 7 days
       Cookies.set("token",result.token,  { expires: 7 })
       Cookies.set("isadmin",result.user.isAdmin,  { expires: 7 })
       

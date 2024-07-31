@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import io from 'socket.io-client';
-
+import hamburger from "../Images/hamburger.png"
 
 const socket = io('http://localhost:5000'); 
 
@@ -199,11 +199,15 @@ const showNotificationList = () =>{
     // Redirect to login page or home page
     window.location.href = "/login";
   };
+const [sidebar,setSidebar]=useState(false)
+  const showSideBar =()=>{
+setSidebar(!sidebar)
+  }
   return (
     <>
       {user ? (
-        <nav class="flex-no-wrap relative flex w-full items-center justify-between h-12 z-50">
-          <div class="flex w-full flex-wrap items-center justify-between px-3">
+        <nav class="flex-no-wrap relative flex w-full items-center justify-between h-12 z-50 ">
+          <div class="flex w-full flex-wrap items-center justify-around px-3">
             <button
               class="block border-0 bg-transparent px-2 text-black/50 hover:no-underline hover:shadow-none focus:no-underline focus:shadow-none focus:outline-none focus:ring-0 dark:text-neutral-200 lg:hidden"
               type="button"
@@ -214,7 +218,12 @@ const showNotificationList = () =>{
               aria-label="Toggle navigation"
             ></button>
 
-            <div class="relative top-2 left-4">
+
+<div  className="sm:block lg:hidden block xl:hidden 2xl:hidden 3xl:hidden 4xl:hidden w-1/3 absolute left-10 top-2">
+  <img src={hamburger} alt="hamburger" className="h-10 relative top-1 flex justify-left" onClick={showSideBar}/>
+</div>
+
+            <div class="relative top-2 left-4 sm:hidden lg:block hidden xl:block 2xl:block 3xl:block 4xl:block">
               <ul
                 class="list-style-none me-auto flex flex-col ps-0 lg:flex-row"
                 data-twe-navbar-nav-ref
@@ -299,9 +308,7 @@ const showNotificationList = () =>{
           />
         </svg>
       </span>
-      <span className="absolute -mt-4 ms-2.5 rounded-full bg-danger px-[0.35em] py-[0.15em] text-[0.6rem] font-bold leading-none text-white">
-        1
-      </span>
+      
     </a>
   </div>
   <div className="relative top-2 right-8">{user.username}</div>
@@ -374,7 +381,31 @@ const showNotificationList = () =>{
 
 
 
-
+{sidebar && (
+  
+  <>
+  <div class=" md:flex flex-col w-64 bg-gray-800 absolute top-16 mt-2 z-50 ">
+        
+          <div class="flex flex-col flex-1 overflow-y-auto">
+              <nav class="flex-1 px-2 py-4 bg-gray-800">
+                  <a  href="/home" class="flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700">
+                   
+           Home
+                  </a>
+                  <a   href={`/MapComponent/${user._id}`} class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700">
+                      
+                  Find Stations
+                  </a>
+                  <a href={`/MyReservation/${user._id}`} class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700">
+                      
+                  My Reservations
+                  </a>
+              </nav>
+          </div>
+      </div>
+  
+  </>
+  )}
 
 
 
