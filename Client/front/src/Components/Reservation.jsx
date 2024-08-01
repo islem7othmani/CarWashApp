@@ -533,17 +533,17 @@ const getCar = (id,image) => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-100 h-screen z-0 mt-6 ">
-        <div className="relative top-20 left-12">
+      <div className="bg-gray-100 h-screen z-0 mt-6 w-screen ">
+        <div className="relative top-20 left-2  sm:left-2 lg:left-12 xl:left-12">
           <h1 className="font-bold text-xl text-blue-600 pb-2">Stations Near You</h1>
           <p className="text-gray-700 font-medium">View detailed information about various car wash stations based on your geographical location</p>
         </div>
 
-        <div className="flex flex-col relative top-28 bg-white w-full">
+        <div className="flex flex-col relative top-28  w-full overflow-x-scroll">
           <div className="bg-gray-100 ">
             <div className="p-1.5 w-11/12 inline-block align-middle ml-12 ">
-              <div className="border rounded-lg bg-white ">
-                <table className="min-w-full divide-y divide-gray-200">
+              <div className="border rounded-lg  ">
+                <table className="min-w-full divide-y divide-gray-200 bg-white ">
                   <thead className="bg-gray-200">
                     <tr>
                       <th
@@ -788,7 +788,7 @@ const getCar = (id,image) => {
             <span onClick={showCars} className=" border border-blue-500  border-dashed py-4 px-4 text-blue-500 cursor-pointer hover:bg-gray-100 ">+ Select Car</span>
             <img src={selectedImage} alt="" className="h-14" />
             </div>
-            <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl relative top-4 text-white">Submit Reservation</button>
+            <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl relative -top-1 sm:-top-1 lg:top-4 xl-top-4 text-white">Submit Reservation</button>
           </form>
 
 
@@ -845,7 +845,7 @@ const getCar = (id,image) => {
             carsdata.map((car, index) => (
               <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <img src={car.image} alt="" className="w-56 shadow-xl" />
+                  <img src={car.image} alt="" className="w-20 sm:w-20  lg:w-56 xm:w-12 shadow-xl" />
                 </th>
                 <td className="px-6 py-4 font-bold">{car.model}</td>
                 <td className="px-6 py-4">

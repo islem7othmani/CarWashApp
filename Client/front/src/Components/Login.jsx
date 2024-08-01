@@ -17,6 +17,35 @@ export default function Login() {
   const navigate = useNavigate();
  
 
+const [emailData,setEmailData]= useState("")
+
+  const fetchStationByEmail = async (email) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/station/getstationsByEmail/${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const station = await response.json();
+      setEmailData(station);
+  //   console.log(emailData);
+    } catch (error) {
+      console.log("Error fetching user data: " + error.message);
+    }
+  };
+
+
+
   // Handle input changes
   const handleInputChange = (e) => {
     setLoginData({
@@ -43,6 +72,8 @@ export default function Login() {
     return isValid;
   };
 
+  
+  fetchStationByEmail(loginData.email);
   // Form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -77,10 +108,12 @@ export default function Login() {
       Cookies.set("token",result.token,  { expires: 7 })
       Cookies.set("isadmin",result.user.isAdmin,  { expires: 7 })
       
-      if (result.user.isAdmin) {
+      if (result.user.isAdmin && ( !emailData || emailData.length === 0)) {
         navigate("/StationData");
-    } else {
-        navigate("/home");
+    } else if (result.user.isAdmin && ( emailData || emailData.length !== 0)) {
+        navigate("/admin");
+    }else {
+      navigate("/home");
     }
     } catch (error) {
       console.error("Error during login:", error.message);

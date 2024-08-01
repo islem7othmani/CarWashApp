@@ -28,7 +28,7 @@ const StationInfos = () => {
     }
   }, []);
 const [showfom,setShowform]=useState("invisible ");
-console.log("yyyyyyyyy")
+//console.log("yyyyyyyyy")
   const fetchStationData = async (stationId) => {
     try {
       const token = Cookies.get('token');
@@ -189,9 +189,7 @@ console.log("yyyyyyyyy")
   return (
     <div className="flex items-center justify-center p-12 relative bg-gray-50">
       <div className="mx-auto w-full max-w-[550px] relative -top-6 bg-gray-50">
-        <div className=''>
-          See Station Informations <span className='text-blue-600'>click here</span>
-        </div>
+       
         {!infos ? (
           <form onSubmit={handleSubmit}>
             <div className="mb-5">
@@ -273,7 +271,7 @@ console.log("yyyyyyyyy")
                       type="text"
                       name="state"
                       id="state"
-                      placeholder="Enter state"
+                      placeholder="Enter country"
                       value={formData.state}
                       onChange={handleInputChange}
                       className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"

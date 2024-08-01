@@ -219,7 +219,7 @@ function monthNameToNumber(monthName) {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="flex justify-center">No Reservations Availale Yet.</div>;
   }
 
   return (

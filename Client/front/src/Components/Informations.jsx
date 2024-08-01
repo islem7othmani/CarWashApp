@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
-export default function Informations({ id }) {
+export default function Informations({ user }) {
   // Changed to destructure id from props
   const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState({});
   const [stationData, setStationData] = useState({});
   const [stationUser, setStationUser] = useState("");
+console.log("hhhhhhhhhh",user._id)
+const id = user._id
+  useEffect(() => {
+    setStationUser(user.__id);
+  }, [user.__id]);
 
   useEffect(() => {
-    setStationUser(id);
-  }, [id]);
-
-  useEffect(() => {
-    if (stationUser) {
-      getStationByUser(stationUser);
+    if (id) {
+      getStationByUser(id);
     }
-  }, [stationUser]);
+  }, [id]);
 
   // Handle input change for the update form
   const handleInputChange = (e) => {
@@ -180,13 +181,13 @@ export default function Informations({ id }) {
                 </span>
               </p>
               <p>
-                <span className="text-lg font-semibold pr-2">City:</span>
+                <span className="text-lg font-semibold pr-2">State:</span>
                 <span className="font-medium text-gray-600">
                   {stationData.city}
                 </span>
               </p>
               <p>
-                <span className="text-lg font-semibold pr-2">State:</span>
+                <span className="text-lg font-semibold pr-2">Country:</span>
                 <span className="font-medium text-gray-600">
                   {stationData.state}
                 </span>
