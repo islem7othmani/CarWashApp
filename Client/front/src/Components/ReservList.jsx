@@ -29,38 +29,31 @@ const ReservList = () => {
       try {
         const response = await axios.get(`http://localhost:8000/reservation/reservations/${stationId}`);
         const reservationsData = response.data;
-
+        setReservations(reservationsData)
         // Fetch user details for each reservation
-        const reservationsWithUserDetails = await Promise.all(
-          reservationsData.map(async (reservation) => {
-            const userResponse = await axios.get(`http://localhost:8000/authentification/userId/${reservation.user}`);
-            return {
-              ...reservation,
-              userDetails: userResponse.data,
-            };
-          })
-        );
+       
+
 
         // Sort reservations by createdAt in descending order
-        reservationsWithUserDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        setReservations(reservationsWithUserDetails);
+        reservations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+//console.log("zzzzzzzzzz",reservations)
+     //   setReservations(reservations);
 
         // Update refused reservations set
         const newRefusedReservations = new Set(
-          reservationsWithUserDetails
+          reservations
             .filter(reservation => checkDuplicate(reservation))
             .map(reservation => reservation._id)
         );
         setRefusedReservations(newRefusedReservations);
-
+//console.log(reservations) 
         setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
       }
     };
-
+//console.log("eeeeeee",reservations)
     // Initial fetch
     fetchReservations();
 
@@ -223,7 +216,7 @@ function monthNameToNumber(monthName) {
   }
 
   return (
-    <div className="absolute left-80">
+    <div className="absolute w-full lg:w-2/3 xl:w-2/3 lg:left-36 xl:left-80 ">
       <h2 className="font-semibold text-xl text-blue-600 pb-4">
         Reservations for Station
       </h2>
@@ -234,7 +227,7 @@ function monthNameToNumber(monthName) {
           <table style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ border: "1px solid black", padding: "8px" }}>User</th>
+                
                 <th style={{ border: "1px solid black", padding: "8px" }}>Car Size</th>
                 <th style={{ border: "1px solid black", padding: "8px" }}>Type of Lavage</th>
                 <th style={{ border: "1px solid black", padding: "8px" }}>Date</th>
@@ -253,9 +246,7 @@ function monthNameToNumber(monthName) {
 
                 return (
                   <tr key={reservation._id}>
-                    <td style={{ border: "1px solid black", padding: "8px" }}>
-                      {reservation.userDetails.username || "Unknown"}
-                    </td>
+                    
                     <td style={{ border: "1px solid black", padding: "8px" }}>
                       {reservation.carSize}
                     </td>

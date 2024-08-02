@@ -170,14 +170,14 @@ const [av,setAv]= useState(false);
 
   const [showNL1 ,setShowNL1]=useState(false)
 
-  const show15 =()=>{
-    if(showNotification3 === true){
-      setShowNL1(true)
-    }else{
-      setShowNL1(false)
+  const show15 = () => {
+    if (showNotification3 === true) {
+      setShowNL1(!showNL1);
+    } else {
+      setShowNL1(!showNL1);
     }
-    setNotification3(false)
-  }
+    setNotification3(false);
+  };
 //console.log("iferjlqekjgrlkjrg",user)
 //console.log("iferjlqekjgrlkjrg",reservationById.user)
 //console.log("iferjlqekjgrlkjrg",user._id)

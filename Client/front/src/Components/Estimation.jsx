@@ -175,7 +175,7 @@ const Estimation = ({ user }) => {
             <input type="number" value={inputValue.nbr} name='nbr' onChange={handleInputChange} className='w-1/3 rounded-xl pl-2' placeholder='Number of cars' />
           </div>
           <div className='grid grid-cols-1'>
-            <div className="flex justify-end text-white font-bold text-5xl relative -top-24 right-24">
+            <div className="flex justify-end text-white font-bold text-5xl relative -top-16 sm:-top-16 lg:-top-24 xl:-top-24 right-24">
               <span>{carCount}</span>
             </div>
             

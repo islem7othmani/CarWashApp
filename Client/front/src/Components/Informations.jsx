@@ -141,9 +141,9 @@ const id = user._id
   };
 
   return (
-    <div className="flex">
+    <div className=" w-full">
       <div className="w-96"></div>
-      <div className="p-6 bg-white shadow-md rounded-lg w-2/3">
+      <div className="p-6 bg-white shadow-md relative rounded-lg lg:w-2/3 xl:w-2/3 lg:left-80 xl:left-80">
         {!isUpdating ? (
           <>
             <h1 className="text-blue-600 text-2xl font-bold">
