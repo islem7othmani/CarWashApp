@@ -14,13 +14,7 @@ export default function Testimonial() {
       
       </div>
 
-      <button
-     style={{ backgroundColor: "#A2A8D3" }}
-        className="mt-6 inline-flex  items-center gap-2 rounded-full bg-purple-400 font-medium text-lg py-2 px-6 mt-4 rounded-xl shadow-xl  text-white"
-      >
-        <span class="font-medium"> Read all reviews </span>
-
-      </button>
+     
     </div>
 
     <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">

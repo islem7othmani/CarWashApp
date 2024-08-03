@@ -149,32 +149,26 @@ const [emailData,setEmailData]= useState("")
   };
 
   return (
-    <div className="flex">
-      <div className="bg-gradient-to-r from-blue-950 to-blue-500 h-screen w-1/2 ">
-        <h1 className="font-bold text-5xl text-white relative top-24 left-36">
+    <div className="flex flex-col md:flex-row h-screen">
+      <div className="bg-gradient-to-r from-blue-950 to-blue-500 h-1/2 md:h-full md:w-1/2 flex flex-col items-center justify-center p-8">
+        <h1 className="font-bold text-3xl md:text-5xl text-white">
           Join <span style={{ color: "#A2A8D3" }}>Us</span>
         </h1>
-        <p className="font-medium text-xl text-gray-300 relative top-24 pt-4 left-36">
+        <p className="font-medium text-lg md:text-xl text-gray-300 mt-4">
           To Reserve Your Car Wash
         </p>
-        <img
-          src={signupimg}
-          alt="Sign Up"
-          className="h-64 fixed top-96 left-80"
-        />
+        <img src={signupimg} alt="Sign Up" className="h-48 md:h-64 mt-8 md:mt-12" />
       </div>
-      <div className="relative left-48 pt-48">
-        <div>
-          <h1 className="font-bold pb-2 flex justify-center text-xl">Log In</h1>
-        </div>
-        <form className="relative top-6 space-y-2" onSubmit={handleFormSubmit}>
+      <div className="flex flex-col items-center justify-center p-8 md:w-1/2">
+        <h1 className="font-bold text-xl md:text-2xl mb-4">Log In</h1>
+        <form className="space-y-4 w-full max-w-md" onSubmit={handleFormSubmit}>
           <input
             onChange={handleInputChange}
             type="email"
             placeholder="Email"
             name="email"
             value={loginData.email}
-            className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+            className="bg-white shadow-xl rounded-xl h-12 w-full pl-4"
           />
           <input
             onChange={handleInputChange}
@@ -182,16 +176,16 @@ const [emailData,setEmailData]= useState("")
             placeholder="Password"
             name="password"
             value={loginData.password}
-            className="bg-white flex justify-center gap-2 shadow-xl rounded-xl h-12 w-96 pl-2"
+            className="bg-white shadow-xl rounded-xl h-12 w-full pl-4"
           />
           <button
             type="submit"
-            className="relative top-4 py-2 px-36 left-5 rounded-full shadow-xl font-bold text-white"
+            className="w-full py-2 rounded-full shadow-xl font-bold text-white mt-4"
             style={{ backgroundColor: "#A2A8D3" }}
           >
             Log In
           </button>
-          <p className="font-medium relative top-5 text-sm text-gray-700">
+          <p className="font-medium text-sm text-gray-700 mt-4">
             <button
               className="text-blue-500 underline"
               onClick={handleForgotPassword}
@@ -199,7 +193,7 @@ const [emailData,setEmailData]= useState("")
               Forget Password?
             </button>
           </p>
-          <p className="font-medium relative top-5 text-sm text-gray-700">
+          <p className="font-medium text-sm text-gray-700 mt-4">
             You don't Have An Account?{" "}
             <a
               href="/signup"
