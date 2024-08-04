@@ -188,7 +188,7 @@ function monthNameToNumber(monthName) {
             const reservationMinutesSinceMidnight = reservationHour * 60 + reservationMinute;
             const timeDifferenceMin = reservationMinutesSinceMidnight - currentMinutesSinceMidnight;
 
-            if (timeDifferenceMin > 0 && timeDifferenceMin <= 15) {
+            if (timeDifferenceMin > 0 && timeDifferenceMin <= 45) {
               console.log('Reservation within 15 minutes:', reservation.user);
               socket.emit('sendReminder', reservation.user);
             }

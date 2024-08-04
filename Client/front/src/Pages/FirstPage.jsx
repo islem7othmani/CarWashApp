@@ -56,7 +56,7 @@ export default function FirstPage() {
 
         </nav>
         <div className="md:hidden flex items-center">
-          <button className="text-white" onClick={toggleMobileMenu}>
+          <button className="text-white relative bottom-7" onClick={toggleMobileMenu}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
             </svg>
@@ -65,7 +65,7 @@ export default function FirstPage() {
       </div>
       {isMobileMenuOpen && (
         <div className="md:hidden mt-4">
-          <nav className="flex flex-col gap-4 font-medium text-sm text-white list-none cursor-pointer bg-white text-black h-screen w-2/3 absolute right-0 top-20 z-50 rounded-lg shadow-xl " >
+          <nav className="flex flex-col gap-4 font-medium text-sm text-white list-none pl-4 pt-4 cursor-pointer bg-white text-black h-screen w-2/3 absolute right-0 top-20 z-50 rounded-lg shadow-xl " >
           <li onClick={() => scrollToSection("home")}>Home</li>
             <li onClick={() => scrollToSection("application")}>Application</li>
             <li onClick={() => scrollToSection("testimonial")}>Testimonial</li>
