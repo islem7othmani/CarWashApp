@@ -839,7 +839,7 @@ const getCar = (id,image) => {
             <th scope="col" className="px-6 py-3">Mark</th>
             <th scope="col" className="px-6 py-3">Select</th>
           </tr>
-        </thead>
+        </thead> 
         <tbody>
           {carsdata.length > 0 ? (
             carsdata.map((car, index) => (

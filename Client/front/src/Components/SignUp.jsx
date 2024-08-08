@@ -159,7 +159,7 @@ export default function SignUp() {
             className="bg-white shadow-xl rounded-xl h-12 w-full pl-4"
           />
           <div className="flex items-center mt-4">
-            <label htmlFor="isAdmin" className="mr-2">is admin?</label>
+            <label htmlFor="isAdmin" className="mr-2">you're station owner?</label>
             <input
               type="radio"
               name="isAdmin"

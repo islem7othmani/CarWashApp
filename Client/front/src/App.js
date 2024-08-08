@@ -15,6 +15,8 @@ import Position from "./Components/Position";
 import Calender from "./Components/Calender"; 
 import MyReservation from "./Components/MyReserv"; 
 import StationInfos from "./Components/StationInfos";
+import AdminDashboard from "./Components/AdminDashboard"; 
+import Payment from "./Components/Payment"; 
 
 
 
@@ -40,6 +42,9 @@ function App() {
       <Route path="/calender" element={<Calender/>} /> 
       <Route path="/MyReservation/:userId" element={<MyReservation/>} /> 
       <Route path="/StationData" element={<StationInfos/>} /> 
+      <Route path="/adminDashboard" element={<AdminDashboard/>} /> 
+      <Route path="/Payment" element={<Payment/>} /> 
+
       </Routes>
     </Router>
    
