@@ -79,6 +79,38 @@ export default function AdminDashboard() {
   const [owners,setOwners]=useState(false)
   const [dash,setDash]=useState(true)
   const [pay,setPay]=useState(false)
+  
+  const [payments1, setPayments1] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+  useEffect(() => {
+    // Fetch payments data from the backend
+    const fetchPayments = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/paymentS/paymentsstation', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch payments');
+        }
+
+        const data = await response.json();
+        setPayments1(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPayments();
+  }, []);
 
 
   const showdash =()=>{
@@ -439,52 +471,90 @@ export default function AdminDashboard() {
 
   {pay && (
   
-  
-    <div className=" overflow-x-auto absolute top-28 w-2/3 left-56">
-    
+  <>
+<div className="flex z-10 absolute top-20 left-56 space-x-6">
+  {/* First Table */}
+  <div className="w-3/5">
     <table className="w-full text-sm text-left text-gray-500 shadow-xl">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3">User</th>
-            <th scope="col" className="px-6 py-3">Email</th>
-            <th scope="col" className="px-6 py-3">Phone</th>
-            <th scope="col" className="px-6 py-3">Last Payment</th>
-            <th scope="col" className="px-6 py-3">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.map((payment) => (
-            <tr key={payment._id} className="bg-white border-b">
-              <td className="px-6 py-4 font-medium text-gray-900">
-                {payment.userDetails?.username || 'Unknown User'}
-              </td>
-              <td className="px-6 py-4">
-                {payment.userDetails?.email || 'N/A'}
-              </td>
-              <td className="px-6 py-4">
-                {payment.userDetails?.phone || 'N/A'}
-              </td>
-              <td className="px-6 py-4">
-                {new Date(payment.date).toLocaleDateString()}
-              </td>
-              <td className="px-6 py-4">
-                <button
-                  className="px-4 py-2 bg-red-500 text-white rounded mr-2"
-                >
-                  Block User
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-   </div>
-  
-          
-  
-  
-  )}
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+        <th scope="col" className="px-4 py-2">Name</th>
+          <th scope="col" className="px-4 py-2">Card Number</th>
+          <th scope="col" className="px-4 py-2">Amount</th>
+          <th scope="col" className="px-4 py-2">Date</th>
+          <th scope="col" className="px-4 py-2">Action</th>
 
+        </tr>
+      </thead>
+      <tbody>
+        {payments.map((payment) => (
+          <tr key={payment._id} className="bg-white border-b">
+            <td className="px-4 py-2 font-medium text-gray-900">
+              {payment.name || 'Unknown User'}
+            </td>
+            <td className="px-4 py-2">
+              {payment.cardNumber || 'N/A'}
+            </td>
+            <td className="px-4 py-2">
+              {payment.amount || 'N/A'}
+            </td>
+            <td className="px-4 py-2">
+              {new Date(payment.date).toLocaleDateString()}
+            </td>
+            <td className="px-4 py-2">
+              <button className="px-2 py-1 bg-red-500 text-white rounded">
+                Block User
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {/* Second Table */}
+  <div className="w-3/5">
+    <table className="w-full text-sm text-left text-gray-500 shadow-xl">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" className="px-4 py-2">Name</th>
+          <th scope="col" className="px-4 py-2">Card Number</th>
+          <th scope="col" className="px-4 py-2">Amount</th>
+          <th scope="col" className="px-4 py-2">Date</th>
+          <th scope="col" className="px-4 py-2">Action</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {payments.map((payment) => (
+          <tr key={payment._id} className="bg-white border-b">
+            <td className="px-4 py-2 font-medium text-gray-900">
+              {payment.name || 'Unknown'}
+            </td>
+            <td className="px-4 py-2">
+              {payment.cardNumber || 'N/A'}
+            </td>
+            <td className="px-4 py-2">
+              ${payment.amount || 'N/A'}
+            </td>
+            <td className="px-4 py-2">
+              {new Date(payment.date).toLocaleDateString()}
+            </td>
+            <td className="px-4 py-2">
+            <button className="px-2 py-1 bg-red-500 text-white rounded">
+                Block User
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  </>
+  )}
 
     </>
   )

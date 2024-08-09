@@ -110,7 +110,7 @@ const [emailData,setEmailData]= useState("")
       
       if (result.user.isAdmin && ( !emailData || emailData.length === 0)) {
         navigate("/StationData");
-    } else if (result.user.isAdmin && ( emailData || emailData.length !== 0)) {
+    } else if (result.user.isAdmin  && ( emailData || emailData.length !== 0)) {
         navigate("/admin");
     }else {
       navigate("/home");

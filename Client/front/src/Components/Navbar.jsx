@@ -201,15 +201,6 @@ export default function Navbar(msg) {
               >
                 <li class="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref>
                   <a
-                    class="text-black/60 truserIdansition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"
-                    href={`/MapComponent/${user._id}`}
-                    data-twe-nav-link-ref
-                  >
-                    Find Stations
-                  </a>
-                </li>
-                <li class="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref>
-                  <a
                     class="text-black/60 transition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"
                     href="/home"
                     data-twe-nav-link-ref
@@ -217,6 +208,16 @@ export default function Navbar(msg) {
                     Home
                   </a>
                 </li>
+                <li class="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref>
+                  <a
+                    class="text-black/60 truserIdansition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"
+                    href={`/MapComponent/${user._id}`}
+                    data-twe-nav-link-ref
+                  >
+                    Find Stations
+                  </a>
+                </li>
+                
 
                 <li class="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref>
                   <a
@@ -225,6 +226,16 @@ export default function Navbar(msg) {
                     data-twe-nav-link-ref
                   >
                     My Reservations
+                  </a>
+                </li>
+
+                <li class="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref>
+                  <a
+                    class="text-black/60 transition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"
+                    href={`/Payment/${user._id}`}
+                    data-twe-nav-link-ref
+                  >
+                    Payment
                   </a>
                 </li>
               </ul>
@@ -346,6 +357,14 @@ export default function Navbar(msg) {
                     >
                       My Reservations
                     </a>
+                  <a
+                    class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700"
+                    href={`/Payment/${user._id}`}
+                    data-twe-nav-link-ref
+                  >
+                    Payment
+                  </a>
+                
                   </nav>
                 </div>
               </div>

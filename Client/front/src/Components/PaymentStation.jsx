@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
-import Navbar from './Navbar';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 import pay from '../Images/pay.png';
-//import paymentIllustration from '/mnt/data/A_simple_and_clean_illustration_of_an_online_payme.png';
 
-export default function Payment() {
-  const { id } = useParams();
-
-  // Get today's date in YYYY-MM-DD format
+export default function PaymentStation() {
+  // Define getCurrentDate before using it
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -18,6 +15,7 @@ export default function Payment() {
     return `${year}-${month}-${day}`;
   };
 
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: '',
     cardNumber: '',
@@ -25,10 +23,18 @@ export default function Payment() {
     cvv: '',
     amount: '',
     date: getCurrentDate(),  // Automatically set to the current date
-    user: id    
+    station: Cookies.get('stationId') || ''  // Get station ID from cookie
   });
-
   const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
+
+  useEffect(() => {
+    // Update formData when station ID changes
+    const stationId = Cookies.get('stationId');
+    setFormData(prevData => ({
+      ...prevData,
+      station: stationId
+    }));
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -40,7 +46,7 @@ export default function Payment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8000/payment/addpayment', {
+      const response = await fetch('http://localhost:8000/paymentS/addpaymentstation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -55,9 +61,9 @@ export default function Payment() {
           cardNumber: '',
           exp: '',
           cvv: '',
-          amount: 100,
+          amount: '',
           date: getCurrentDate(),  // Reset to current date
-          user: id
+          station: Cookies.get('stationId') || ''  // Ensure station ID is set
         });
       } else {
         toast.error(`Error: ${data.message}`);
@@ -69,22 +75,13 @@ export default function Payment() {
 
   return (
     <>
-    
-      <Navbar />
       <ToastContainer />
-      <section className="bg-gray-100 relative top-4  antialiased dark:bg-gray-900 md:py-16">
+      <section className="bg-gray-100 relative top-4 antialiased dark:bg-gray-900 md:py-16">
         <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
           <div className="mx-auto max-w-5xl">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-2">Payment</h2>
 
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-              
-              <img 
-                src={pay} 
-                alt="Payment Illustration" 
-                className="w-full lg:w-1/2 mb-6 lg:mb-0 lg:mr-8"
-              />
-
+            <div className="flex justify-center relative -top-20 -left-6">
               <form onSubmit={handleSubmit} className="w-full lg:w-1/2 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8">
                 <div className="mb-6 grid grid-cols-2 gap-4">
                   <div className="col-span-2 sm:col-span-1">
@@ -109,7 +106,7 @@ export default function Payment() {
 
                   <div className="col-span-2">
                     <label htmlFor="amount" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Amount*</label>
-                    <input type="number" disabled id="amount" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="100.00" required />
+                    <input type="number" id="amount" value={formData.amount} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="100.00" required />
                   </div>
 
                   <div className="col-span-2">
@@ -121,7 +118,7 @@ export default function Payment() {
 
                 <button type="submit" className="bg-blue-500 text-white w-full py-2 font-semibold shadow-xl rounded-lg">Pay now</button>
               </form>
-             
+            
             </div>
           </div>
         </div>

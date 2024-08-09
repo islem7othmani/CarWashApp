@@ -7,6 +7,9 @@ import Informations from "./Informations";
 import Available from "./Available";
 import ReservList from "./ReservList";
 import io from 'socket.io-client';
+import Spinner from './Spinner';
+import Payment from "./Payment";
+import PaymentStation from "./PaymentStation";
 
 const socket = io('http://localhost:5000'); 
 
@@ -76,25 +79,40 @@ export default function Admin() {
     }
   };
 
-  const [estimation, setEstimation] = useState(true);
+  const [estimation, setEstimation] = useState(false);
   const [Station, setStation] = useState(false);
-  const [information, setInformation] = useState(false);
+  const [information, setInformation] = useState(true);
   const [Availability, setAvailability] = useState(false);
   const [Reservation, setReservation] = useState(false);
+  const [payment, setPayment] = useState(false);
+
+
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInformation(true);
+      setLoading(false);
+    }, 4000); // 2 seconds delay
+
+    // Cleanup the timer
+    return () => clearTimeout(timer);
+  }, []);
 
   const changeUI = () => {
     setEstimation(true);
     setStation(false);
     setInformation(false);
     setReservation(false);
-
+    setPayment(false)
   };
   const changeUI2 = () => {
     setStation(true);
     setEstimation(false);
     setInformation(false);
     setReservation(false);
-
+    setPayment(false)
   };
 
   const changeUI3 = () => {
@@ -102,7 +120,7 @@ export default function Admin() {
     setEstimation(false);
     setInformation(true);
     setReservation(false);
-
+    setPayment(false)
   };
 
   const changeUI4 = () => {
@@ -111,7 +129,7 @@ export default function Admin() {
     setEstimation(false);
     setInformation(false);
     setReservation(false);
-
+    setPayment(false)
   };
 
   const changeUI5 = () => {
@@ -120,6 +138,15 @@ export default function Admin() {
     setEstimation(false);
     setInformation(false);
     setReservation(true);
+    setPayment(false)
+  };
+  const changeUI6 = () => {
+    setAvailability(false);
+    setStation(false);
+    setEstimation(false);
+    setInformation(false);
+    setReservation(false);
+    setPayment(true)
   };
 
 
@@ -373,7 +400,37 @@ const [sidebar,setSidebar]=useState(false);
 
 
 
-
+            <li
+              className={`${activeIndex === 5 ? "bg-blue-500 rounded-lg" : ""}`}
+              onClick={() => {
+                handleItemClick(5);
+                changeUI6();
+              }}
+            >
+              <a class="" href="#">
+                <button
+                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    class="w-5 h-5 text-inherit"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+                    Payment
+                  </p>
+                </button>
+              </a>
+            </li>
 
 
 
@@ -523,10 +580,14 @@ const [sidebar,setSidebar]=useState(false);
 
       {estimation && <Estimation user={user} />}
       {Station && <StationInfos />}
-      {information && (
-        <div>
-          <Informations user={user} />
-        </div>
+         {loading ? (
+        <Spinner /> // Show spinner while loading
+      ) : (
+        information && (
+          <div>
+            <Informations user={user} />
+          </div>
+        )
       )}
 
 
@@ -536,6 +597,13 @@ const [sidebar,setSidebar]=useState(false);
           <ReservList />
         </div>
       )}
+
+{payment && (
+        <div>
+          <PaymentStation />
+        </div>
+      )}
+
 
 
 
@@ -693,9 +761,37 @@ const [sidebar,setSidebar]=useState(false);
 
 
 
-
-
-
+            <li
+              className={`${activeIndex === 5 ? "bg-blue-500 rounded-lg" : ""}`}
+              onClick={() => {
+                handleItemClick(5);
+                changeUI6();
+              }}
+            >
+            <a class="" href="#">
+                <button
+                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    class="w-5 h-5 text-inherit"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+                    Payment
+                  </p>
+                </button>
+              </a>
+</li>
 
 
 

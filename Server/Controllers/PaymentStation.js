@@ -1,19 +1,19 @@
-const Payment = require('../Models/Payment'); 
+const PaymentStation = require('../Models/PaymentStation'); 
 
 // Add a new payment
 const addPayment = async (req, res) => {
     try {
-        const { amount, date, user, cardNumber, exp,cvv, name } = req.body;
+        const { amount, date, station, cardNumber, exp, cvv, name } = req.body;
 
         // Create a new payment
-        const newPayment = new Payment({
+        const newPayment = new PaymentStation({
             name,
             cardNumber,
             exp,
             cvv,
             amount,
             date,
-            user
+            station
         });
 
         // Save the payment to the database
@@ -31,25 +31,28 @@ const addPayment = async (req, res) => {
     }
 };
 
+// Get all payments
 const getPayments = async (req, res) => {
     try {
-        // Aggregate payments with user details
-        const payments = await Payment.aggregate([
+        // Log the collections' contents to verify data
+        const paymentStations = await PaymentStation.find({});
+        console.log('PaymentStations:', paymentStations);
+
+        // Aggregate payments with station details
+        const paymentstation = await PaymentStation.aggregate([
             {
                 $lookup: {
-                    from: "users",
-                    localField: "user",
+                    from: "stations", // Ensure this is the correct collection name
+                    localField: "station",
                     foreignField: "_id",
-                    as: "userDetails",
+                    as: "stations",
                 },
-            },
-            { 
-                $unwind: "$userDetails" // Don't use preserveNullAndEmptyArrays for testing
             }
         ]);
-        console.log(payments);
 
-        res.status(200).json(payments); 
+        console.log('Aggregated Payments:', paymentstation);
+
+        res.status(200).json(paymentstation); 
     } catch (error) {
         res.status(500).json({
             message: "Error retrieving payments",
@@ -57,8 +60,6 @@ const getPayments = async (req, res) => {
         });
     }
 };
-
-
 
 module.exports = {
     addPayment,

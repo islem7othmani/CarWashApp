@@ -59,6 +59,9 @@ app.use('/reservation', reservationRoutes);
 const paymentRoutes = require('./Routes/Payment.route');
 app.use('/payment', paymentRoutes);
 
+const paymentSRoutes = require('./Routes/PaymentStationRoute');
+app.use('/paymentS', paymentSRoutes);
+
 mongoose.connect("mongodb+srv://webcamp36:34rkG6lJTQrdzaVx@cluster0.5hmqsyi.mongodb.net/");
 mongoose.connection.on("connected", () => {
   console.log("DB connected");
