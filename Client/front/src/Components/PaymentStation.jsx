@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Navbar from './Navbar';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Cookies from 'js-cookie';
 import pay from '../Images/pay.png';
 
-export default function PaymentStation() {
-  // Define getCurrentDate before using it
+export default function Payment() {
+  const { id } = useParams();
+
+  // Get today's date in YYYY-MM-DD format
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -15,26 +17,17 @@ export default function PaymentStation() {
     return `${year}-${month}-${day}`;
   };
 
-  const { id } = useParams();
   const [formData, setFormData] = useState({
     name: '',
     cardNumber: '',
     exp: '',
     cvv: '',
-    amount: '',
+    amount: 100, // Set default amount to 100
     date: getCurrentDate(),  // Automatically set to the current date
-    station: Cookies.get('stationId') || ''  // Get station ID from cookie
+    user: id    
   });
-  const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
 
-  useEffect(() => {
-    // Update formData when station ID changes
-    const stationId = Cookies.get('stationId');
-    setFormData(prevData => ({
-      ...prevData,
-      station: stationId
-    }));
-  }, []);
+  const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,7 +39,7 @@ export default function PaymentStation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8000/paymentS/addpaymentstation', {
+      const response = await fetch('http://localhost:8000/payment/addpayment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -61,9 +54,9 @@ export default function PaymentStation() {
           cardNumber: '',
           exp: '',
           cvv: '',
-          amount: '',
+          amount: 100,
           date: getCurrentDate(),  // Reset to current date
-          station: Cookies.get('stationId') || ''  // Ensure station ID is set
+          user: id
         });
       } else {
         toast.error(`Error: ${data.message}`);
@@ -76,12 +69,14 @@ export default function PaymentStation() {
   return (
     <>
       <ToastContainer />
-      <section className="bg-gray-100 relative top-4 antialiased dark:bg-gray-900 md:py-16">
-        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+      <section className="bg-gray-100 relative top-4  antialiased dark:bg-gray-900 md:py-16">
+        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0 relative left-48 -top-4">
           <div className="mx-auto max-w-5xl">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-2">Payment</h2>
 
-            <div className="flex justify-center relative -top-20 -left-6">
+            <div className="">
+              
+              
+
               <form onSubmit={handleSubmit} className="w-full lg:w-1/2 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8">
                 <div className="mb-6 grid grid-cols-2 gap-4">
                   <div className="col-span-2 sm:col-span-1">
@@ -106,19 +101,19 @@ export default function PaymentStation() {
 
                   <div className="col-span-2">
                     <label htmlFor="amount" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Amount*</label>
-                    <input type="number" id="amount" value={formData.amount} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="100.00" required />
+                    <input type="number" value={formData.amount} disabled id="amount" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" required />
                   </div>
 
                   <div className="col-span-2">
                     <label htmlFor="date" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Date*</label>
-                    <input type="date" disabled id="date" value={formData.date} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" required />
+                    <input type="date" value={formData.date} disabled id="date" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" required />
                   </div>
 
                 </div>
 
                 <button type="submit" className="bg-blue-500 text-white w-full py-2 font-semibold shadow-xl rounded-lg">Pay now</button>
               </form>
-            
+             
             </div>
           </div>
         </div>

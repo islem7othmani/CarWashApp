@@ -30,13 +30,13 @@ function App() {
       <Route path="/SignUp" element={<SignUp/>} />
       <Route path="/Login" element={<Login/>} /> 
       <Route path="/confirm/:activationCode" element={<PopUpSucess />} />
-      <Route path="/home/" element={<Profil/>} /> 
+      <Route path="/home/:id" element={<Profil/>} /> 
       <Route path="/MapComponent/:userId" element={<MapComponent/>} /> 
       <Route path="/Test" element={<Test/>} /> 
       <Route path="/forgetPassword" element={<ForgetPassword/>} /> 
       <Route path="/reset/:pwCode" element={<ResetPassword/>} /> 
       <Route path="/estimation" element={<Estimation/>} /> 
-      <Route path="/Admin" element={<Admin/>} /> 
+      <Route path="/Admin/:id" element={<Admin/>} /> 
       <Route path="/Reservation/:userId" element={<Reservation/>} /> 
       <Route path="/Position" element={<Position/>} /> 
       <Route path="/calender" element={<Calender/>} /> 

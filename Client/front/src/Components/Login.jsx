@@ -111,9 +111,9 @@ const [emailData,setEmailData]= useState("")
       if (result.user.isAdmin && ( !emailData || emailData.length === 0)) {
         navigate("/StationData");
     } else if (result.user.isAdmin  && ( emailData || emailData.length !== 0)) {
-        navigate("/admin");
+        navigate(`/admin/${result.user._id}`);
     }else {
-      navigate("/home");
+      navigate(`/home/${result.user._id}`);
     }
     } catch (error) {
       console.error("Error during login:", error.message);

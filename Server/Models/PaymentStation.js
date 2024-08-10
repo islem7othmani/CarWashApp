@@ -7,7 +7,8 @@ const paymentSchema = new mongoose.Schema({
     cvv: { type: Number },
     amount: { type: Number, required: true },
     date: { type: Date, required: true },
-    station: { type: mongoose.Schema.Types.ObjectId, ref: "Station"} // Use "Station" for consistent naming
+    station: { type: mongoose.Schema.Types.ObjectId, ref: "Station"},
+    isBlocked : {type:Boolean, default:false}
 }, { timestamps: true });
 
 const PaymentStation = mongoose.model("PaymentStation", paymentSchema);

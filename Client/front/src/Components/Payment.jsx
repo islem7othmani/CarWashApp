@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import pay from '../Images/pay.png';
-//import paymentIllustration from '/mnt/data/A_simple_and_clean_illustration_of_an_online_payme.png';
 
 export default function Payment() {
   const { id } = useParams();
@@ -23,7 +22,7 @@ export default function Payment() {
     cardNumber: '',
     exp: '',
     cvv: '',
-    amount: '',
+    amount: 100, // Set default amount to 100
     date: getCurrentDate(),  // Automatically set to the current date
     user: id    
   });
@@ -69,10 +68,9 @@ export default function Payment() {
 
   return (
     <>
-    
       <Navbar />
       <ToastContainer />
-      <section className="bg-gray-100 relative top-4  antialiased dark:bg-gray-900 md:py-16">
+      <section className="bg-gray-100 relative top-4 antialiased dark:bg-gray-900 md:py-16">
         <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
           <div className="mx-auto max-w-5xl">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-2">Payment</h2>
@@ -109,12 +107,12 @@ export default function Payment() {
 
                   <div className="col-span-2">
                     <label htmlFor="amount" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Amount*</label>
-                    <input type="number" disabled id="amount" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="100.00" required />
+                    <input type="number" value={formData.amount} disabled id="amount" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" required />
                   </div>
 
                   <div className="col-span-2">
                     <label htmlFor="date" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Date*</label>
-                    <input type="date" disabled id="date" value={formData.date} onChange={handleChange} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" required />
+                    <input type="date" value={formData.date} disabled id="date" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" required />
                   </div>
 
                 </div>

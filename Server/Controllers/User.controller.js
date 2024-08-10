@@ -210,6 +210,30 @@ const getUser = async (req, res) => {
       };
 
 
+
+
+      const updateUserStatus = async (req, res) => {
+        const id = req.params.id;
+        const { isBlocked } = req.body;
+    
+        try {
+            const updatedUser = await User.findByIdAndUpdate(
+                id,
+                { isBlocked }, // Simplified object assignment
+                { new: true }
+            );
+    
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            return res.status(200).json(updatedUser);
+        } catch (err) {
+            return res.status(500).json({ error: err.message });
+        }
+    };
+    
+
 module.exports = {
     register,
     login,
@@ -217,5 +241,6 @@ module.exports = {
     forgotPassword,
     resetPassword,
     getUser,
-    getUserById
+    getUserById,
+    updateUserStatus
 };

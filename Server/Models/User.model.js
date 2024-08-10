@@ -10,6 +10,7 @@ const user = new mongoose.Schema({
     activationCode: {type: String},
     resetToken:{type: String},
     isAdmin: { type: Boolean, default: false },
+    isBlocked: { type: Boolean, default: false },
 },{timestamps:true})
 
 

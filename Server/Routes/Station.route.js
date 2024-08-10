@@ -9,7 +9,7 @@ const route = require ("express").Router();
  
 
 route.post('/informations',authenticateUser, StationInformations);
-route.post('/updateInformations/:id',authenticateUser, updateStation);
+route.post('/updateInformations/:id', updateStation);
 route.get('/getInformations/:gerent', getStationsByGerent);
 route.get('/getstation/:id', getStation);
 route.get('/getstations/:city', getStationsByCity);
