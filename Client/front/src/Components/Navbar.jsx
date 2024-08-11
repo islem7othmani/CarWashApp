@@ -170,6 +170,15 @@ export default function Navbar(msg) {
   const showSideBar = () => {
     setSidebar(!sidebar);
   };
+
+
+
+
+
+
+
+
+
   return (
     <>
       {user ? (
@@ -202,7 +211,7 @@ export default function Navbar(msg) {
                 <li class="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref>
                   <a
                     class="text-black/60 transition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"
-                    href="/home"
+                    href={`/home/${user._id}`}
                     data-twe-nav-link-ref
                   >
                     Home
@@ -340,7 +349,7 @@ export default function Navbar(msg) {
                 <div class="flex flex-col flex-1 overflow-y-auto">
                   <nav class="flex-1 px-2 py-4 bg-gray-800">
                     <a
-                      href="/home"
+                      href={`/home/${user._id}`}
                       class="flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700"
                     >
                       Home

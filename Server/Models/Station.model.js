@@ -9,7 +9,6 @@ const station = new mongoose.Schema({
     state:{type:String},
     CodePostal:{type:String},
     gerent:{type: mongoose.Schema.Types.ObjectId,ref: "User"},
-    isBlocked: {type:Boolean, default:false}
 },{timestamps:true})
 
 

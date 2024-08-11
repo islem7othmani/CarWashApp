@@ -234,6 +234,25 @@ const getUser = async (req, res) => {
     };
     
 
+
+
+    const getAllUsers = async (req, res) => {
+        try {
+          const users = await User.find(); // Retrieves all users from the database
+      
+          if (users.length === 0) {
+            return res.status(404).json({ message: "No users found" });
+          }
+      
+          return res.status(200).json(users);
+        } catch (err) {
+          console.error('MongoDB Query Error:', err);
+          return res.status(500).json({ message: "Internal server error", error: err.message });
+        }
+      };
+      
+
+
 module.exports = {
     register,
     login,
@@ -242,5 +261,6 @@ module.exports = {
     resetPassword,
     getUser,
     getUserById,
-    updateUserStatus
+    updateUserStatus,
+    getAllUsers
 };

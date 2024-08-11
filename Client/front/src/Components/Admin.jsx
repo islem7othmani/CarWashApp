@@ -94,7 +94,7 @@ export default function Admin() {
     const timer = setTimeout(() => {
       setInformation(true);
       setLoading(false);
-    }, 4000); // 2 seconds delay
+    }, 5000);
 
     // Cleanup the timer
     return () => clearTimeout(timer);
@@ -171,6 +171,8 @@ export default function Admin() {
     }
   }, []);
 
+
+  const [status,setStatus]=useState(false);
   const fetchUserData = async (email) => {
     try {
       const response = await fetch(
@@ -190,6 +192,7 @@ export default function Admin() {
 
       const userData = await response.json();
       setUser(userData);
+      setStatus(userData.isBlocked)
       console.log("user data from admin", userData);
       
     } catch (error) {
@@ -250,13 +253,15 @@ const [sidebar,setSidebar]=useState(false);
     setSidebar(!sidebar)
   }
 
+
+
   return (
     <>
       <aside class="bg-gradient-to-br from-gray-800 to-gray-900 -translate-x-80 fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0">
         <div class="relative border-b border-white/20">
           <a class="flex items-center gap-4 py-6 px-8" href="#/">
             <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">
-              Admin Dashboard
+              Station Owner Dashboard
             </h6>
           </a>
           <button
@@ -578,14 +583,14 @@ const [sidebar,setSidebar]=useState(false);
             </div>
       </div>
 
-      {estimation && <Estimation user={user} />}
-      {Station && <StationInfos />}
+      {estimation && <Estimation user={user}  status={status}  />}
+      {Station && <StationInfos status={status}  />}
          {loading ? (
         <Spinner /> // Show spinner while loading
       ) : (
         information && (
           <div>
-            <Informations user={user} />
+            <Informations user={user} status={status} />
           </div>
         )
       )}
@@ -594,7 +599,7 @@ const [sidebar,setSidebar]=useState(false);
 
 {Reservation && (
         <div>
-          <ReservList />
+          <ReservList status={status} />
         </div>
       )}
 

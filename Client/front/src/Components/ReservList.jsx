@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import io from "socket.io-client";
+import paymentpopup from "../Images/paymentpopup.png";
 
 const socket = io("http://localhost:5000");
 
-const ReservList = () => {
+const ReservList = ({status}) => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -216,7 +217,21 @@ function monthNameToNumber(monthName) {
   }
 
   return (
-    <div className="absolute w-full lg:w-2/3 xl:w-2/3 lg:left-36 xl:left-80 ">
+
+    status ? (
+
+      <div className="w-full">
+      <div className="flex justify-center border rounded-xl mx-80 shadow-xl">
+        <img src={paymentpopup} alt="" className='h-64' />
+        <div className="space-y-2 ml-4 relative top-16"> 
+          <h1 className="text-2xl font-bold text-red-600">Payment Required</h1>
+          <p className="text-lg text-gray-700 pb-4">Please complete your payment to proceed.</p>
+          <a href="" className="bg-blue-500 text-white py-2 w-48 mt-4 rounded-lg font-semibold shadow-xl px-4">Go to payment page</a>
+        </div>
+      </div>
+    </div>
+    ):(
+      <div className="absolute w-full lg:w-2/3 xl:w-2/3 lg:left-36 xl:left-80 ">
       <h2 className="font-semibold text-xl text-blue-600 pb-4">
         Reservations for Station
       </h2>
@@ -305,6 +320,8 @@ function monthNameToNumber(monthName) {
         </>
       )}
     </div>
+    )
+   
   );
 };
 

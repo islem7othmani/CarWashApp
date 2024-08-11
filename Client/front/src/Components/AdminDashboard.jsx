@@ -30,6 +30,8 @@ ChartJS.register(
 export default function AdminDashboard() {
   const [payments, setPayments] = useState([]);
 
+  const [totalAmount, setTotalAmount] = useState(0);
+
   useEffect(() => {
     const fetchPayments = async () => {
       try {
@@ -37,6 +39,12 @@ export default function AdminDashboard() {
         if (!response.ok) throw new Error('Failed to fetch payments');
         const data = await response.json();
         setPayments(data);
+
+        // Calculate the total amount
+        const total = data.reduce((sum, payment) => sum + payment.amount, 0);
+        setTotalAmount(total);
+        console.log(totalAmount)
+
       } catch (error) {
         console.error('Error fetching payments:', error.message);
       }
@@ -45,6 +53,9 @@ export default function AdminDashboard() {
     fetchPayments();
   }, []);
 
+
+
+    const [users, setUsers] = useState(false);
 
   const data = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -72,7 +83,7 @@ export default function AdminDashboard() {
     ],
   };
 
-  const [users, setUsers] = useState(false);
+  const [users1, setUsers1] = useState(false);
   const [owners, setOwners] = useState(false);
   const [dash, setDash] = useState(true);
   const [pay, setPay] = useState(false);
@@ -113,12 +124,12 @@ export default function AdminDashboard() {
 
   const showdash = () => {
     setDash(true);
-    setUsers(false);
+    setUsers1(false);
     setOwners(false);
     setPay(false);
   };
   const showusers = () => {
-    setUsers(true);
+    setUsers1(true);
     setDash(false);
     setOwners(false);
     setPay(false);
@@ -126,13 +137,13 @@ export default function AdminDashboard() {
   const showOwners = () => {
     setOwners(true);
     setDash(false);
-    setUsers(false);
+    setUsers1(false);
     setPay(false);
   };
   const showpays = () => {
     setPay(true);
     setDash(false);
-    setUsers(false);
+    setUsers1(false);
     setOwners(false);
   };
 
@@ -240,7 +251,32 @@ export default function AdminDashboard() {
 
 
 
+  const [userCount, setUserCount] = useState(0);
+  const [activeUserCount, setActiveUserCount] = useState(0);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/authentification/allUsers');
+        if (!response.ok) throw new Error('Failed to fetch users');
+  
+        const users = await response.json();
+        setUsers(users);
+  
+        // Calculate the total number of users
+        setUserCount(users.length);
+  
+        // Calculate the number of users with isBlocked = false
+        const activeUsers = users.filter(user => !user.isBlocked);
+        setActiveUserCount(activeUsers.length);
+      } catch (error) {
+        console.error('Error fetching users:', error.message);
+      }
+    };
+  
+    fetchUsers();
+  }, []);
+  
 
 
 
@@ -450,7 +486,7 @@ export default function AdminDashboard() {
           </nav>
 
           {dash && (
-            <section className="container mx-auto pt-20">
+            <section className="container mx-auto pt-20 relative">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 <div className="bg-gradient-to-b from-green-200 to-green-100 border-b-4 border-green-600 rounded-lg shadow-xl p-5">
                   <div className="flex flex-row items-center">
@@ -464,7 +500,7 @@ export default function AdminDashboard() {
                         Total Revenue
                       </h2>
                       <p className="font-bold text-3xl">
-                        $3249{" "}
+                        {totalAmount} DT
                         <span className="text-green-500">
                           <i className="fas fa-caret-up"></i>
                         </span>
@@ -485,7 +521,7 @@ export default function AdminDashboard() {
                         Total Users
                       </h2>
                       <p className="font-bold text-3xl">
-                        249{" "}
+                        {userCount}{" "}
                         <span className="text-pink-500">
                           <i className="fas fa-exchange-alt"></i>
                         </span>
@@ -503,10 +539,10 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex-1 text-right md:text-center">
                       <h2 className="font-bold uppercase text-gray-600">
-                        New Users
+                        Non Blocked Users
                       </h2>
                       <p className="font-bold text-3xl">
-                        2,749{" "}
+                        {activeUserCount}{" "}
                         <span className="text-yellow-600">
                           <i className="fas fa-caret-up"></i>
                         </span>
@@ -515,26 +551,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-b from-blue-200 to-blue-100 border-b-4 border-blue-500 rounded-lg shadow-xl p-5">
-                  <div className="flex flex-row items-center">
-                    <div className="flex-shrink pr-4">
-                      <div className="rounded-full p-5 bg-blue-600">
-                        <i className="fas fa-server fa-2x fa-inverse"></i>
-                      </div>
-                    </div>
-                    <div className="flex-1 text-right md:text-center">
-                      <h2 className="font-bold uppercase text-gray-600">
-                        Server Uptime
-                      </h2>
-                      <p className="font-bold text-3xl">
-                        152 days{" "}
-                        <span className="text-blue-500">
-                          <i className="fas fa-caret-up"></i>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
+               
               </div>
 
               <div className="flex gap-4">
@@ -553,7 +570,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {users && (
+      {users1 && (
         <div className=" overflow-x-auto absolute top-28 w-2/3 left-56">
           <button className="mb-4 px-4 py-2 bg-blue-500 text-white rounded">
             Add New User
@@ -635,9 +652,9 @@ export default function AdminDashboard() {
 
       {pay && (
         <>
-          <div className="flex z-10 absolute top-20 left-56 space-x-6">
+          <div className="flex z-10 absolute top-20 left-56 space-x-6 w-2/3">
             {/* First Table */}
-            <div className="">
+            <div className="w-full">
               <table className="w-full text-sm text-left text-gray-500 shadow-xl">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
@@ -690,7 +707,7 @@ export default function AdminDashboard() {
   {payment.userDetails.isBlocked ? "Blocked" : "Unblocked"}
 </td>
 
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 space-x-2">
                         
                           <button
                             className="px-2 py-1 bg-green-500 text-white rounded"

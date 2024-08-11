@@ -5,6 +5,8 @@ import Admin from "./Admin";
 import Profile from "../Images/profile.mp4";
 import mail from "../Images/mail.png";
 import phone from "../Images/telephone.png";
+import paymentpopup from "../Images/paymentpopup.png";
+
 
 export default function MainProfil() {
   const [email, setEmail] = useState("");
@@ -25,6 +27,8 @@ export default function MainProfil() {
     }
   }, []);
 
+
+  const [status,setStatus]=useState();
   const fetchUserData = async (email) => {
     try {
       const response = await fetch(
@@ -44,6 +48,7 @@ export default function MainProfil() {
 
       const userData = await response.json();
       setUser(userData);
+      setStatus(userData.isBlocked)
       // console.log("user data", userData);
       //  console.log(user);
 
@@ -155,8 +160,31 @@ export default function MainProfil() {
     }
   }, [user]);
 
+
+
+
+
+
+  
+
   return (
-    <>
+  
+
+status ? (
+
+  <div className="w-full relative top-36">
+      <div className="flex justify-center border rounded-xl mx-80 shadow-xl">
+        <img src={paymentpopup} alt="" className='h-64' />
+        <div className="space-y-2 ml-4 relative top-16"> 
+          <h1 className="text-2xl font-bold text-red-600">Payment Required</h1>
+          <p className="text-lg text-gray-700 pb-4">Please complete your payment to proceed.</p>
+          <a href="" className="bg-blue-500 text-white py-2 w-48 mt-4 rounded-lg font-semibold shadow-xl px-4">Go to payment page</a>
+        </div>
+      </div>
+    </div>
+):(
+<>
+
       <div className="relative top-6">
         <img
           src="https://i.pinimg.com/564x/6b/9d/75/6b9d75569b9b2f49967153b03afdac47.jpg"
@@ -306,6 +334,8 @@ export default function MainProfil() {
           </div>
         </div>
       )}
-    </>
+</>
+)
+    
   );
 }

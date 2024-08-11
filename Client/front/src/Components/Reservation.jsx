@@ -12,6 +12,7 @@ import { UNSAFE_useRouteId, useParams } from 'react-router-dom';  // Import useP
 import SelectCar from "./SelectCar";
 import io from 'socket.io-client';
 import DateTimePicker from 'react-datetime-picker';
+import paymentpopup from "../Images/paymentpopup.png";
 
 
 
@@ -22,6 +23,7 @@ const socket = io('http://localhost:5000'); // Connect to the server
 function Reservation() {
   // const history = useHistory();
   const positionC = Cookies.get("position");
+  const email = Cookies.get("email");
   const [data, setData] = useState(positionC);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
@@ -159,7 +161,8 @@ const [reservationDetails, setReservationDetails] = useState({
   
       const data = await response.json();
       //console.log('Stations data:', data);  // Debugging line
-      setStations(data);  // Update stations to an array
+      setStations(data);  
+      console.log(data)// Update stations to an array
     } catch (error) {
       setFetchError("Error fetching station data: " + error.message);  // Set fetch error
       //console.error("Error fetching station data:", error);  // Log the error for debugging
@@ -362,6 +365,35 @@ const [showreserv,setShowreserv]=useState(false)
 
 
 
+  const [user, setUser] = useState("");
+  const [status, setStatus] = useState(false);
+  const fetchUserData = async (email) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/authentification/User/${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Ensure that cookies are sent with the request
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const userData = await response.json();
+     setStatus(userData.isBlocked)
+      //   console.log("user data", userData);
+      //    console.log(user);
+    } catch (error) {
+      setError("Error fetching user data: " + error.message);
+    }
+  };
+
+  fetchUserData(email)
 
   const fetchReservationsById = async (stationId) => {
     try {
@@ -533,7 +565,24 @@ const getCar = (id,image) => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-100 h-screen z-0 mt-6 w-screen ">
+
+
+      
+      {status ? (
+  <div className="w-full relative top-36">
+    <div className="flex justify-center border rounded-xl mx-80 shadow-xl">
+      <img src={paymentpopup} alt="Payment Popup" className="h-64" />
+      <div className="space-y-2 ml-4 relative top-16">
+        <h1 className="text-2xl font-bold text-red-600">Payment Required</h1>
+        <p className="text-lg text-gray-700 pb-4">Please complete your payment to proceed.</p>
+        <a href="" className="bg-blue-500 text-white py-2 w-48 mt-4 rounded-lg font-semibold shadow-xl px-4">Go to payment page</a>
+      </div>
+    </div>
+  </div>
+) : (
+  <div>
+    
+    <div className="bg-gray-100 h-screen z-0 mt-6 w-screen ">
         <div className="relative top-20 left-2  sm:left-2 lg:left-12 xl:left-12">
           <h1 className="font-bold text-xl text-blue-600 pb-2">Stations Near You</h1>
           <p className="text-gray-700 font-medium">View detailed information about various car wash stations based on your geographical location</p>
@@ -591,51 +640,53 @@ const getCar = (id,image) => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {stations.length > 0 ? (
-                      stations.map((stat) => (
-                        <tr key={stat.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {stat.nameStation}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {stat.area}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {stat.city}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {stat.state}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {stat.phoneStation}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                            {stat.emailStation}
-                          </td>
-                          
-                          <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                          <button
-  className="bg-blue-400 text-white rounded-xl shadow-xl py-1 px-4"
-  onClick={() => {
-    redirectToInfo(stat._id);
-    fetchReservationsById(stat._id);
-  }}
->
-  See More Information
-</button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="7"
-                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
-                        >
-                          No stations available
-                        </td>
-                      </tr>
-                    )}
+                  {stations.length > 0 ? (
+  stations
+    .filter(stat => stat.gerentDetails && stat.gerentDetails.isBlocked === false) // Filter stations with unblocked gerents
+    .map(stat => (
+      <tr key={stat._id}>
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+          {stat.nameStation}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+          {stat.area}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+          {stat.city}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+          {stat.state}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+          {stat.phoneStation}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+          {stat.emailStation}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+          <button
+            className="bg-blue-400 text-white rounded-xl shadow-xl py-1 px-4"
+            onClick={() => {
+              redirectToInfo(stat._id);
+              fetchReservationsById(stat._id);
+            }}
+          >
+            See More Information
+          </button>
+        </td>
+      </tr>
+    ))
+) : (
+  <tr>
+    <td
+      colSpan="7"
+      className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
+    >
+      No stations available
+    </td>
+  </tr>
+)}
+
                   </tbody>
                 </table>
               </div>
@@ -887,6 +938,9 @@ const getCar = (id,image) => {
      </div>
      </>
   )}
+  </div>
+)}
+
     </>
   );
 }
