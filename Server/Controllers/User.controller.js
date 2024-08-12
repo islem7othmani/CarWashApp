@@ -252,7 +252,44 @@ const getUser = async (req, res) => {
       };
       
 
+      const deleteUser = async (req, res) => {
+        const id = req.params.id;
+      
+        try {
+          const deletedUser = await User.findByIdAndDelete(id);
+      
+          if (!deletedUser) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+      
+          return res.status(200).json({ message: 'User deleted successfully' });
+        } catch (err) {
+          return res.status(500).json({ error: err.message });
+        }
+      };
 
+
+      const updateUser = async (req, res) => {
+        const { id } = req.params;
+        const { username, phone, email } = req.body;
+      
+        try {
+          const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { username, phone, email },
+            { new: true }
+          );
+      
+          if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+      
+          return res.status(200).json(updatedUser);
+        } catch (err) {
+          return res.status(500).json({ error: err.message });
+        }
+      };
+      
 module.exports = {
     register,
     login,
@@ -262,5 +299,7 @@ module.exports = {
     getUser,
     getUserById,
     updateUserStatus,
-    getAllUsers
+    getAllUsers,
+    deleteUser,
+    updateUser
 };

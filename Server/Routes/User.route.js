@@ -1,4 +1,4 @@
-const { register, login, verifyEmail, forgotPassword, resetPassword, getUser, getUserById,updateUserStatus, getAllUsers } = require("../Controllers/User.controller");
+const { register, login, verifyEmail, forgotPassword, resetPassword, getUser, getUserById,updateUserStatus,updateUser, getAllUsers, deleteUser } = require("../Controllers/User.controller");
 //const { isAdmin } = require('../MiddleWares/isAdmin');  
 
 const route = require("express").Router();
@@ -12,6 +12,9 @@ route.get("/User/:email", getUser);
 route.get("/userId/:id", getUserById);
 route.get("/allUsers", getAllUsers);
 route.put("/updateuser/:id", updateUserStatus);
+route.delete("/deleteUser/:id", deleteUser);
+route.put("/updateUser2/:id", updateUser);
+
 //route.get("/admin", isAdmin);
 
 module.exports = route;
