@@ -30,6 +30,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));  // Use the CORS middleware with the defined options
 app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:3000', // or '*'
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+}));
 
 
 app.use(express.json());

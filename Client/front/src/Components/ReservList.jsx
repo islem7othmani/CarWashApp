@@ -99,11 +99,11 @@ const ReservList = ({status}) => {
         }
       );
       const result = await response.json();
-      if (result.success) {
-        setReservations(prevReservations =>
-          prevReservations.filter(reservation => reservation._id !== reservationId)
-        );
-      }
+    
+
+      setReservations((prevReservations) =>
+        prevReservations.filter((reservation) => reservation._id !== reservationId)
+      );
     } catch (error) {
       console.error("Error deleting reservation:", error);
     }

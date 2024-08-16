@@ -178,6 +178,7 @@ export default function SignUp() {
           <p className="font-medium text-sm text-gray-700 mt-4">
             Already Have An Account? <a href="/login" className="font-bold underline" style={{ color: "#A2A8D3" }}>Log In</a>
           </p>
+          p
         </form>
       </div>
     </div>

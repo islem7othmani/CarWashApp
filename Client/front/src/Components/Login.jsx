@@ -110,6 +110,10 @@ const [emailData,setEmailData]= useState("")
       const result = await response.json();
       
 
+      Cookies.set("userIdd",result.user._id,  { expires: 7 })
+
+
+      const userIdd = Cookies.get("userIdd")
       // Save email and password to cookies (with optional expiration)
       Cookies.set("email", loginData.email, { expires: 7 });  // Set cookie to expire in 7 days
      // Cookies.set("password", loginData.password, { expires: 7 });  // Set cookie to expire in 7 days
@@ -119,7 +123,9 @@ const [emailData,setEmailData]= useState("")
       if (result.user.isAdmin && ( !emailData || emailData.length === 0)) {
         navigate("/StationData");
     } else if (result.user.isAdmin  && ( emailData || emailData.length !== 0)) {
-        navigate(`/admin/${result.user._id}`);
+
+
+        navigate(`/Admin/${userIdd}`);
     }else {
       navigate(`/home/${result.user._id}`);
     }

@@ -169,13 +169,14 @@ const [showfom,setShowform]=useState("invisible ");
       // Set station ID in cookie
       Cookies.set('stationId', result._id, { expires: 7 }); // Expires in 7 days
 
+      const userIdd = Cookies.get("userIdd")
       setStationData(result); // Update the station data
       setInfos(true); // Show the Informations component
       toast.success('Station added successfully!', {
         position: 'top-right',
         autoClose: 3000,
       });
-      navigate("/admin")
+      navigate(`/admin/${userIdd}`)
     } catch (error) {
       console.error('Error adding station:', error.message);
       toast.error('Error adding station: ' + error.message, {

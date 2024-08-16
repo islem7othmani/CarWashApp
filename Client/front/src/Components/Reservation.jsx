@@ -133,20 +133,35 @@ const [reservationDetails, setReservationDetails] = useState({
     fetchLocationDetails();
   }, [latitude, longitude]);
 
+
+
+  const extractLastPart = (encodedStateName) => {
+    // Decode the encoded string
+    const decodedString = decodeURIComponent(encodedStateName);
+    
+    // Split the string by space, get the last part, and convert it to lowercase
+    const lastPart = decodedString.split(' ').pop().toLowerCase();
+    
+    return lastPart;
+  };
+  
+  
   // Fetch stations based on state name
   const fetchStationByLocation = async (stateName) => {
     try {
       // Convert stateName to string and then to lowercase
       const stateNameStr = String(stateName).trim().toLowerCase();
       const encodedStateName = encodeURIComponent(stateNameStr);
-  
+   
       //console.log("The name of the state is", stateNameStr);
       //console.log(`Fetching stations for state: ${stateNameStr}`);  // Debugging line
       //console.log(`Encoded state name: ${encodedStateName}`);  // Debugging line
-  
-      const requestURL = `http://localhost:8000/station/getstations/${encodedStateName}`; 
+  const result = extractLastPart(stateName)
+  console.log(result)
+      const requestURL = `http://localhost:8000/station/getstations/${result}`; 
       //console.log(`Request URL: ${requestURL}`);  // Debugging line
-  
+  console.log(encodedStateName)
+  console.log(stateName)
       const response = await fetch(requestURL, {
         method: "GET",
         headers: {
@@ -545,12 +560,23 @@ const [color,setColor]=useState("blue")
 
 
   
+const extractFileName = (path) => {
+  if (!path) {
+    return ''; // or handle the error case as needed
+  }
+  return path.split('\\').pop().split('/').pop();
+};
+
+
+//const fileName = extractFileName(image);
+
 
 const [selectedCarId, setSelectedCarId] = useState(null);
 const [selectedImage,setSelectedImage] = useState(null);
 const getCar = (id,image) => {
   // Set cookie with the selected car ID
   Cookies.set("carselected", id, { expires: 7 });
+ 
 
   // Update the selected car ID
   setSelectedCarId(id);
@@ -837,7 +863,7 @@ const getCar = (id,image) => {
             </div>
             <div className="flex gap-3 ">
             <span onClick={showCars} className=" border border-blue-500  border-dashed py-4 px-4 text-blue-500 cursor-pointer hover:bg-gray-100 ">+ Select Car</span>
-            <img src={selectedImage} alt="" className="h-14" />
+            <img src={`http://localhost:8000/uploads/${extractFileName(selectedImage)}`}  alt="" className="h-14" />
             </div>
             <button type="submit" className="bg-blue-500 py-1 w-full rounded-xl shadow-xl relative -top-1 sm:-top-1 lg:top-4 xl-top-4 text-white">Submit Reservation</button>
           </form>
@@ -896,7 +922,7 @@ const getCar = (id,image) => {
             carsdata.map((car, index) => (
               <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <img src={car.image} alt="" className="w-20 sm:w-20  lg:w-56 xm:w-12 shadow-xl" />
+                  <img src={`http://localhost:8000/uploads/${extractFileName(car.image)}`} alt="carimage" className="w-20 sm:w-20  lg:w-56 xm:w-12 shadow-xl" />
                 </th>
                 <td className="px-6 py-4 font-bold">{car.model}</td>
                 <td className="px-6 py-4">
