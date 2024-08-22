@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:5000'); // Connect to the server
+const socket = io('http://localhost:5000'); 
 
 export default function Available() {
   const [isAvailable, setIsAvailable] = useState(false); 

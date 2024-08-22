@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';  // Import toast for notifications
+import { toast } from 'react-toastify';  
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -11,7 +11,7 @@ export default function ForgetPassword() {
  
   // Declare forgetpw as an async function
   const forgetpw = async (e) => {
-    e.preventDefault();  // Prevent the default form submission behavior
+    e.preventDefault(); 
    
     try {
       const response = await fetch("http://localhost:8000/authentification/forgetpassword", {

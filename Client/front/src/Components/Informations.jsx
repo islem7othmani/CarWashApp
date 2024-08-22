@@ -13,7 +13,7 @@ export default function Informations({ user, status }) {
   const id = user._id;
 
   useEffect(() => {
-    setStationUser(user._id); // Corrected from __id to _id
+    setStationUser(user._id); 
   }, [user._id]);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function Informations({ user, status }) {
       }
 
       const stations = await response.json();
-      setStationData(stations[0]); // Update to fetch the first station from the array
+      setStationData(stations[0]); 
       setFormData({
         nameStation: stations[0].nameStation,
         phoneStation: stations[0].phoneStation,

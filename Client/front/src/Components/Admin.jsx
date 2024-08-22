@@ -6,12 +6,12 @@ import StationInfos from "./StationInfos";
 import Informations from "./Informations";
 import Available from "./Available";
 import ReservList from "./ReservList";
-import io from 'socket.io-client';
-import Spinner from './Spinner';
+import io from "socket.io-client";
+import Spinner from "./Spinner";
 import Payment from "./Payment";
 import PaymentStation from "./PaymentStation";
 
-const socket = io('http://localhost:5000'); 
+const socket = io("http://localhost:5000");
 
 export default function Admin() {
   const [numCars, setNumCars] = useState(0);
@@ -19,26 +19,12 @@ export default function Admin() {
   const [prediction, setPrediction] = useState("");
   const [model, setModel] = useState(null);
 
-
-
-
-
-
-
-
-
-
-
-
   useEffect(() => {
-    // Load or train the model
     const loadModel = async () => {
-      // For demonstration, create a simple model
       const simpleModel = tf.sequential();
       simpleModel.add(tf.layers.dense({ units: 1, inputShape: [1] }));
       simpleModel.compile({ optimizer: "sgd", loss: "meanSquaredError" });
 
-      // Dummy data for training
       const xs = tf.tensor2d([0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 1]);
       const ys = tf.tensor2d([2, 3, 5, 7, 8, 10, 13, 15, 18], [9, 1]);
 
@@ -86,8 +72,6 @@ export default function Admin() {
   const [Reservation, setReservation] = useState(false);
   const [payment, setPayment] = useState(false);
 
-
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -96,7 +80,6 @@ export default function Admin() {
       setLoading(false);
     }, 5000);
 
-    // Cleanup the timer
     return () => clearTimeout(timer);
   }, []);
 
@@ -105,14 +88,14 @@ export default function Admin() {
     setStation(false);
     setInformation(false);
     setReservation(false);
-    setPayment(false)
+    setPayment(false);
   };
   const changeUI2 = () => {
     setStation(true);
     setEstimation(false);
     setInformation(false);
     setReservation(false);
-    setPayment(false)
+    setPayment(false);
   };
 
   const changeUI3 = () => {
@@ -120,7 +103,7 @@ export default function Admin() {
     setEstimation(false);
     setInformation(true);
     setReservation(false);
-    setPayment(false)
+    setPayment(false);
   };
 
   const changeUI4 = () => {
@@ -129,7 +112,7 @@ export default function Admin() {
     setEstimation(false);
     setInformation(false);
     setReservation(false);
-    setPayment(false)
+    setPayment(false);
   };
 
   const changeUI5 = () => {
@@ -138,7 +121,7 @@ export default function Admin() {
     setEstimation(false);
     setInformation(false);
     setReservation(true);
-    setPayment(false)
+    setPayment(false);
   };
   const changeUI6 = () => {
     setAvailability(false);
@@ -146,9 +129,8 @@ export default function Admin() {
     setEstimation(false);
     setInformation(false);
     setReservation(false);
-    setPayment(true)
+    setPayment(true);
   };
-
 
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -160,19 +142,16 @@ export default function Admin() {
 
   const [user, setUser] = useState(null);
   useEffect(() => {
-    // Get email from cookies
     const cookieEmail = Cookies.get("email");
     if (cookieEmail) {
       setEmail(cookieEmail);
-      // Fetch user data
       fetchUserData(cookieEmail);
     } else {
       console.log("No email found in cookies.");
     }
   }, []);
 
-
-  const [status,setStatus]=useState(false);
+  const [status, setStatus] = useState(false);
   const fetchUserData = async (email) => {
     try {
       const response = await fetch(
@@ -192,9 +171,8 @@ export default function Admin() {
 
       const userData = await response.json();
       setUser(userData);
-      setStatus(userData.isBlocked)
+      setStatus(userData.isBlocked);
       console.log("user data from admin", userData);
-      
     } catch (error) {
       console.log("Error fetching user data: " + error.message);
     }
@@ -202,58 +180,46 @@ export default function Admin() {
 
   fetchUserData();
 
-    //  console.log("xxx",user);
-const stat = Cookies.get("stationId")
+  const stat = Cookies.get("stationId");
 
-const [isListening, setIsListening] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
-const [notification, setNotification] = useState('');
-const [showNotification, setShowNotification] = useState(false);
-//console.log("ee",stat)
-useEffect(() => {
-  const handleNotification = (message) => {
-    if (message.stationId === stat) {
-      setNotification(message);
-      setShowNotification(true);
-      console.log("Received notification for station:", message.stationId);
-    }
+  const [notification, setNotification] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+
+  useEffect(() => {
+    const handleNotification = (message) => {
+      if (message.stationId === stat) {
+        setNotification(message);
+        setShowNotification(true);
+        console.log("Received notification for station:", message.stationId);
+      }
+    };
+
+    socket.on("receiveNotificationNavbar", handleNotification);
+
+    return () => {
+      socket.off("receiveNotificationNavbar", handleNotification);
+    };
+  }, [stat]);
+
+  const showNL = () => {
+    setIsListening(!isListening);
+    setShowNotification(false);
   };
-
-  socket.on('receiveNotificationNavbar', handleNotification);
-
-  return () => {
-    socket.off('receiveNotificationNavbar', handleNotification); // Clean up the subscription on component unmount
-  };
-}, [stat]); // Depend on stat change
-
-const showNL =()=>{
-       setIsListening(!isListening);
-       setShowNotification(false)
-}
-
-
-
-
-
-//console.log("ddddddddd",user._id)
-
-
 
   const logout = () => {
-    // Remove all cookies
     Object.keys(Cookies.get()).forEach(function (cookieName) {
       Cookies.remove(cookieName);
     });
-    // Redirect to login page or home page
+
     window.location.href = "/login";
   };
 
-const [sidebar,setSidebar]=useState(false);
-  const showSideBar=()=>{
-    setSidebar(!sidebar)
-  }
-
-
+  const [sidebar, setSidebar] = useState(false);
+  const showSideBar = () => {
+    setSidebar(!sidebar);
+  };
 
   return (
     <>
@@ -317,7 +283,6 @@ const [sidebar,setSidebar]=useState(false);
                 </button>
               </a>
             </li>
-            
 
             <li
               className={`${activeIndex === 2 ? "bg-blue-500 rounded-lg" : ""}`}
@@ -331,7 +296,7 @@ const [sidebar,setSidebar]=useState(false);
                   class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
                   type="button"
                 >
-                 <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -350,25 +315,6 @@ const [sidebar,setSidebar]=useState(false);
                 </button>
               </a>
             </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             <li
               className={`${activeIndex === 4 ? "bg-blue-500 rounded-lg" : ""}`}
@@ -401,66 +347,22 @@ const [sidebar,setSidebar]=useState(false);
                 </button>
               </a>
             </li>
-
-
-
-
-            <li
-              className={`${activeIndex === 5 ? "bg-blue-500 rounded-lg" : ""}`}
-              onClick={() => {
-                handleItemClick(5);
-                changeUI6();
-              }}
-            >
-              <a class="" href="#">
-                <button
-                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-                  type="button"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="w-5 h-5 text-inherit"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
-                    Payment
-                  </p>
-                </button>
-              </a>
-            </li>
-
-
-
-
-
-
-
-
-
           </ul>
-          
         </div>
       </aside>
 
       <div class="p-4 xl:ml-80">
         <nav class="block w-full max-w-full bg-transparent text-white shadow-none rounded-xl transition-all px-0 py-1">
           <div class="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-            
             <div class="flex justify-between items-center w-full">
-              
               <button
                 class="relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 grid xl:hidden"
                 type="button"
               >
-                <span class="absolute top-1/2 left-10 transform -translate-y-1/2 -translate-x-1/2" onClick={showSideBar}>
+                <span
+                  class="absolute top-1/2 left-10 transform -translate-y-1/2 -translate-x-1/2"
+                  onClick={showSideBar}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -478,31 +380,11 @@ const [sidebar,setSidebar]=useState(false);
                 </span>
               </button>
               <div className="flex relative lg:left-3/4 xl:left-3/4">
-              <a href="#">
-                <button
-                  class="middle none font-sans font-bold center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 hidden items-center gap-1 px-4 xl:flex"
-                  type="button"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="h-5 w-5 text-blue-gray-500"
+                <a href="#">
+                  <button
+                    class="middle none font-sans font-bold center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 hidden items-center gap-1 px-4 xl:flex"
+                    type="button"
                   >
-                    <path
-                      fill-rule="evenodd"
-                      d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                  Welcome <span className='text-blue-500'></span>
-                </button>
-                <button
-                  class="relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 grid xl:hidden"
-                  type="button"
-                >
-                  <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -516,77 +398,95 @@ const [sidebar,setSidebar]=useState(false);
                         clip-rule="evenodd"
                       ></path>
                     </svg>
+                    Welcome <span className="text-blue-500"></span>
+                  </button>
+                  <button
+                    class="relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 grid xl:hidden"
+                    type="button"
+                  >
+                    <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        class="h-5 w-5 text-blue-gray-500"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                  </button>
+                </a>
+
+                <button
+                  aria-expanded="false"
+                  aria-haspopup="menu"
+                  id=":r2:"
+                  className="relative -left-2 middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30"
+                  type="button"
+                  onClick={showNL}
+                >
+                  {showNotification && (
+                    <>
+                      <span className="bg-red-500 rounded-full px-2 relative -top-3 left-2 z-50 text-white"></span>
+                    </>
+                  )}
+                  {isListening && (
+                    <div class="bg-white text-black border z-10 w-80 relative right-56 top-10 rounded-lg shadow-xl h-20 ">
+                      <div class="relative top-4 ">
+                        <h4 class="font-bold  flex justify-start  pl-4">
+                          New Reservation
+                        </h4>
+                        <p class="font-semibold  flex justify-start  pl-4 pt-1">
+                          Check Reservation List Please
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      class="h-5 w-5 text-blue-gray-500"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
                   </span>
                 </button>
-              </a> 
-             
-              <button
-        aria-expanded="false"
-        aria-haspopup="menu"
-        id=":r2:"
-        className="relative -left-2 middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30"
-        type="button"
-        onClick={showNL}
-      >
-                {showNotification &&(
-                  <>
-                              <span className="bg-red-500 rounded-full px-2 relative -top-3 left-2 z-50 text-white"></span>
-                              
-                              </>
-                )}
-                {isListening && (
-                  <div class="bg-white text-black border z-10 w-80 relative right-56 top-10 rounded-lg shadow-xl h-20 ">
-                              
-                            
-                              
-                              <div class="relative top-4 ">
-                                  <h4 class="font-bold  flex justify-start  pl-4">New Reservation</h4>
-                                  <p class="font-semibold  flex justify-start  pl-4 pt-1">Check Reservation List Please</p>
-                              </div>
-                            </div>
-                )}
-                              
-                          
-                <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="h-5 w-5 text-blue-gray-500"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-              </button>
-              <button
-                onClick={logout}
-                className="relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 grid"
-              >
-                <span className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 material-icons">
-                  logout
-                </span>
-              </button>
+                <button
+                  onClick={logout}
+                  className="relative middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-10 max-w-[40px] h-10 max-h-[40px] rounded-lg text-xs text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 grid"
+                >
+                  <span className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 material-icons">
+                    logout
+                  </span>
+                </button>
               </div>
             </div>
           </div>
         </nav>
         <div class="capitalize">
-            
-              <h6 class="">
-           <Available/>
-              </h6>
-            </div>
+          <h6 class="">
+            <Available />
+          </h6>
+        </div>
       </div>
 
-      {estimation && <Estimation user={user}  status={status}  />}
-      {Station && <StationInfos status={status}  />}
-         {loading ? (
-        <Spinner /> // Show spinner while loading
+      {estimation && <Estimation user={user} status={status} />}
+      {Station && <StationInfos status={status} />}
+      {loading ? (
+        <Spinner />
       ) : (
         information && (
           <div>
@@ -595,220 +495,158 @@ const [sidebar,setSidebar]=useState(false);
         )
       )}
 
-
-
-{Reservation && (
+      {Reservation && (
         <div>
           <ReservList status={status} />
         </div>
       )}
 
-{payment && (
-        <div>
-          <PaymentStation />
-        </div>
-      )}
-
-
-
-
-
-
-
       {sidebar && (
-      <>
-   <aside class="bg-gradient-to-br from-gray-800 to-gray-900 w-2/3 absolute top-16 h-screen rounded-xl">
-        <div class="relative border-b border-white/20">
-          <a class="flex items-center gap-4 py-6 px-8" href="#/">
-            <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">
-              Admin Dashboard
-            </h6>
-          </a>
-          <button
-            class="middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-white hover:bg-white/10 active:bg-white/30 absolute right-0 top-0 grid rounded-br-none rounded-tl-none xl:hidden"
-            type="button"
-          >
-            <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                class="h-5 w-5 text-white"
+        <>
+          <aside class="bg-gradient-to-br from-gray-800 to-gray-900 w-2/3 absolute top-16 h-screen rounded-xl">
+            <div class="relative border-b border-white/20">
+              <a class="flex items-center gap-4 py-6 px-8" href="#/">
+                <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">
+                  Admin Dashboard
+                </h6>
+              </a>
+              <button
+                class="middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-white hover:bg-white/10 active:bg-white/30 absolute right-0 top-0 grid rounded-br-none rounded-tl-none xl:hidden"
+                type="button"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </span>
-          </button>
-        </div>
-        <div class="m-4">
-          <ul class="mb-4 flex flex-col gap-1">
-            <li
-              className={`${activeIndex === 0 ? "bg-blue-500 rounded-lg" : ""}`}
-              onClick={() => {
-                handleItemClick(0);
-                changeUI();
-              }}
-            >
-              <a className="" href="#">
-                <button
-                  className="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-                  type="button"
-                >
+                <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
                     viewBox="0 0 24 24"
-                    fill="currentColor"
+                    stroke-width="2.5"
+                    stroke="currentColor"
                     aria-hidden="true"
-                    className="w-5 h-5 text-inherit"
-                  >
-                    <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path>
-                    <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path>
-                  </svg>
-                  <p className="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
-                    Estimation
-                  </p>
-                </button>
-              </a>
-            </li>
-            
-
-            <li
-              className={`${activeIndex === 2 ? "bg-blue-500 rounded-lg" : ""}`}
-              onClick={() => {
-                handleItemClick(2);
-                changeUI3();
-              }}
-            >
-              <a class="" href="#">
-                <button
-                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-                  type="button"
-                >
-                 <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    className="w-5 h-5 text-inherit"
+                    class="h-5 w-5 text-white"
                   >
                     <path
-                      fillRule="evenodd"
-                      d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                      clipRule="evenodd"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
                     ></path>
                   </svg>
-                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
-                    Get Station Informations
-                  </p>
-                </button>
-              </a>
-            </li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <li
-              className={`${activeIndex === 4 ? "bg-blue-500 rounded-lg" : ""}`}
-              onClick={() => {
-                handleItemClick(4);
-                changeUI5();
-              }}
-            >
-              <a class="" href="#">
-                <button
-                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-                  type="button"
+                </span>
+              </button>
+            </div>
+            <div class="m-4">
+              <ul class="mb-4 flex flex-col gap-1">
+                <li
+                  className={`${
+                    activeIndex === 0 ? "bg-blue-500 rounded-lg" : ""
+                  }`}
+                  onClick={() => {
+                    handleItemClick(0);
+                    changeUI();
+                  }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="w-5 h-5 text-inherit"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
-                    Reservations
-                  </p>
-                </button>
-              </a>
-            </li>
+                  <a className="" href="#">
+                    <button
+                      className="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+                      type="button"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        className="w-5 h-5 text-inherit"
+                      >
+                        <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path>
+                        <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path>
+                      </svg>
+                      <p className="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+                        Estimation
+                      </p>
+                    </button>
+                  </a>
+                </li>
 
-
-
-
-
-            <li
-              className={`${activeIndex === 5 ? "bg-blue-500 rounded-lg" : ""}`}
-              onClick={() => {
-                handleItemClick(5);
-                changeUI6();
-              }}
-            >
-            <a class="" href="#">
-                <button
-                  class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-                  type="button"
+                <li
+                  className={`${
+                    activeIndex === 2 ? "bg-blue-500 rounded-lg" : ""
+                  }`}
+                  onClick={() => {
+                    handleItemClick(2);
+                    changeUI3();
+                  }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="w-5 h-5 text-inherit"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                  <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
-                    Payment
-                  </p>
-                </button>
-              </a>
-</li>
+                  <a class="" href="#">
+                    <button
+                      class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+                      type="button"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        className="w-5 h-5 text-inherit"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                      <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+                        Get Station Informations
+                      </p>
+                    </button>
+                  </a>
+                </li>
 
+                <li
+                  className={`${
+                    activeIndex === 4 ? "bg-blue-500 rounded-lg" : ""
+                  }`}
+                  onClick={() => {
+                    handleItemClick(4);
+                    changeUI5();
+                  }}
+                >
+                  <a class="" href="#">
+                    <button
+                      class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+                      type="button"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        class="w-5 h-5 text-inherit"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                      <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+                        Reservations
+                      </p>
+                    </button>
+                  </a>
+                </li>
 
-
-
-
-
-          </ul>
-          
-        </div>
-      </aside>
-    
-      </>
+                <li
+                  className={`${
+                    activeIndex === 5 ? "bg-blue-500 rounded-lg" : ""
+                  }`}
+                  onClick={() => {
+                    handleItemClick(5);
+                    changeUI6();
+                  }}
+                ></li>
+              </ul>
+            </div>
+          </aside>
+        </>
       )}
     </>
   );

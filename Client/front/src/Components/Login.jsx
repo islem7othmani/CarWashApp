@@ -1,23 +1,18 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import signupimg from "../Images/signupimg.png";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 
-
-
 export default function Login() {
-
   const [loginData, setLoginData] = useState({
-    email: Cookies.get("email") || "",  // Get email from cookie if it exists
-   // password: Cookies.get("password") || "",   // Get password from cookie if it exists
+    email: Cookies.get("email") || "",
   });
 
   const navigate = useNavigate();
- 
 
-const [emailData,setEmailData]= useState("")
+  const [emailData, setEmailData] = useState("");
 
   const fetchStationByEmail = async (email) => {
     try {
@@ -38,15 +33,11 @@ const [emailData,setEmailData]= useState("")
 
       const station = await response.json();
       setEmailData(station);
-  //   console.log(emailData);
     } catch (error) {
       console.log("Error fetching user data: " + error.message);
     }
   };
 
-
-
-  // Handle input changes
   const handleInputChange = (e) => {
     setLoginData({
       ...loginData,
@@ -72,7 +63,6 @@ const [emailData,setEmailData]= useState("")
     return isValid;
   };
 
-  
   fetchStationByEmail(loginData.email);
   // Form submission
   const handleFormSubmit = async (e) => {
@@ -85,7 +75,6 @@ const [emailData,setEmailData]= useState("")
     const { email, password } = loginData;
 
     if (email === "admin@admin" && password === "admin123456789") {
-      // Navigate directly to the admin route
       navigate("/AdminDashboard");
       return;
     }
@@ -108,27 +97,22 @@ const [emailData,setEmailData]= useState("")
       }
 
       const result = await response.json();
-      
 
-      Cookies.set("userIdd",result.user._id,  { expires: 7 })
+      Cookies.set("userIdd", result.user._id, { expires: 7 });
 
+      const userIdd = Cookies.get("userIdd");
+      Cookies.set("email", loginData.email, { expires: 7 });
 
-      const userIdd = Cookies.get("userIdd")
-      // Save email and password to cookies (with optional expiration)
-      Cookies.set("email", loginData.email, { expires: 7 });  // Set cookie to expire in 7 days
-     // Cookies.set("password", loginData.password, { expires: 7 });  // Set cookie to expire in 7 days
-      Cookies.set("token",result.token,  { expires: 7 })
-      Cookies.set("isadmin",result.user.isAdmin,  { expires: 7 })
-      
-      if (result.user.isAdmin && ( !emailData || emailData.length === 0)) {
+      Cookies.set("token", result.token, { expires: 7 });
+      Cookies.set("isadmin", result.user.isAdmin, { expires: 7 });
+
+      if (result.user.isAdmin && (!emailData || emailData.length === 0)) {
         navigate("/StationData");
-    } else if (result.user.isAdmin  && ( emailData || emailData.length !== 0)) {
-
-
+      } else if (result.user.isAdmin && (emailData || emailData.length !== 0)) {
         navigate(`/Admin/${userIdd}`);
-    }else {
-      navigate(`/home/${result.user._id}`);
-    }
+      } else {
+        navigate(`/home/${result.user._id}`);
+      }
     } catch (error) {
       console.error("Error during login:", error.message);
 
@@ -147,17 +131,10 @@ const [emailData,setEmailData]= useState("")
     }
   };
 
-   
-
-  
-  
-
-  // Navigate to the password reset page
   const handleForgotPassword = () => {
     navigate("/forgetPassword");
   };
 
-  // Navigate to the sign up page
   const handleSignUp = () => {
     navigate("/sign-up");
   };
@@ -171,7 +148,11 @@ const [emailData,setEmailData]= useState("")
         <p className="font-medium text-lg md:text-xl text-gray-300 mt-4">
           To Reserve Your Car Wash
         </p>
-        <img src={signupimg} alt="Sign Up" className="h-48 md:h-64 mt-8 md:mt-12" />
+        <img
+          src={signupimg}
+          alt="Sign Up"
+          className="h-48 md:h-64 mt-8 md:mt-12"
+        />
       </div>
       <div className="flex flex-col items-center justify-center p-8 md:w-1/2">
         <h1 className="font-bold text-xl md:text-2xl mb-4">Log In</h1>

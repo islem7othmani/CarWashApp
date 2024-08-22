@@ -17,27 +17,27 @@ const Estimation = ({ user , status }) => {
   const sizeMap = { small: 0, medium: 1, large: 2 };
 
   const [trainingData, setTrainingData] = useState([
-    [1, 0, 0], // 1 car, interne wash, small
-    [2, 1, 1], // 2 cars, externe wash, medium
-    [3, 2, 2], // 3 cars, interneexterne wash, large
-    [1, 0, 1], // 1 car, interne wash, small
-    [2, 1, 0], // 2 cars, externe wash, medium
-    [3, 2, 0], // 3 cars, interneexterne wash, large
-    [1, 0, 2], // 1 car, interne wash, small
-    [2, 1, 2], // 2 cars, externe wash, medium
-    [3, 2, 1], // 3 cars, interneexterne wash, large
+    [1, 0, 0], 
+    [2, 1, 1], 
+    [3, 2, 2], 
+    [1, 0, 1], 
+    [2, 1, 0], 
+    [3, 2, 0], 
+    [1, 0, 2], 
+    [2, 1, 2], 
+    [3, 2, 1], 
   ]);
 
   const [outputData, setOutputData] = useState([
-    [5], // Wait time for 1 car, interne wash, small
-    [15], // Wait time for 2 cars, externe wash, medium
-    [30], // Wait time for 3 cars, interneexterne wash, large
-    [60], // Wait time for 1 car, interne wash, small
-    [70], // Wait time for 2 cars, externe wash, medium
-    [80], // Wait time for 3 cars, interneexterne wash, large
-    [100], // Wait time for 1 car, interne wash, small
-    [120], // Wait time for 2 cars, externe wash, medium
-    [150], // Wait time for 3 cars, interneexterne wash, large
+    [5], 
+    [15], 
+    [30], 
+    [60], 
+    [70], 
+    [80], 
+    [100], 
+    [120], 
+    [150], 
   ]);
 
   useEffect(() => {
@@ -107,7 +107,6 @@ const Estimation = ({ user , status }) => {
     station: "",
   });
 
-  // Fetch stationId from cookies
   useEffect(() => {
     const stationIdFromCookie = Cookies.get("stationId");
     if (stationIdFromCookie) {
@@ -136,7 +135,6 @@ const Estimation = ({ user , status }) => {
   };
 
   const handleAddCar = async () => {
-    // Check that stationId is correctly set from the cookie before submission
     if (!inputValue.station) {
       alert("Station ID is not set. Please refresh the page or try again.");
       return;

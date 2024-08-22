@@ -20,7 +20,6 @@ export default function CarCard({ car, onEdit }) {
 
   const fileName = extractFileName(car.image);
 
-  // Handle input change for the update form
   const handleInputChange = (e) => {
     setCarData1({
       ...carData1,
@@ -36,7 +35,6 @@ export default function CarCard({ car, onEdit }) {
     });
   };
 
-  // Delete car functionality
   const deleteCar = async () => {
     try {
       const token = Cookies.get('token');
@@ -50,15 +48,13 @@ export default function CarCard({ car, onEdit }) {
       const result = await response.json();
       console.log('Delete result:', result);
       if (result.success) {
-        // Trigger a refresh or callback to update the list of cars
-        window.location.reload();  // This will reload the page
+        window.location.reload();  
       }
     } catch (error) {
       console.error('Error deleting car:', error);
     }
   };
 
-  // Update car functionality
   const updateCar = async (e) => {
     e.preventDefault();
     try {
@@ -84,19 +80,17 @@ export default function CarCard({ car, onEdit }) {
         throw new Error('Network response was not ok.');
       }
 
-      // Handle successful car update
       const updatedCar = await response.json();
       console.log('Updated car:', updatedCar);
       setPopup(false);
       if (onEdit) {
-        onEdit(); // Trigger a refresh or callback to update the list of cars
+        onEdit(); 
       }
     } catch (error) {
       console.error('Error updating car:', error.message);
     }
   };
 
-  // Show and hide the form
   const showForm = () => {
     setPopup(true);
   };
@@ -105,7 +99,6 @@ export default function CarCard({ car, onEdit }) {
     setPopup(false);
   };
 
-  // Show and hide the delete confirmation popup
   const showDeleteConfirmation = () => {
     setConfirmDelete(true);
   };
@@ -115,9 +108,9 @@ export default function CarCard({ car, onEdit }) {
   };
 
   const handleDelete = async () => {
-    await deleteCar(); // Wait for delete operation to complete
-    closeDeleteConfirmation(); // Close the confirmation popup
-    window.location.reload(); // Reload the page after deletion
+    await deleteCar(); 
+    closeDeleteConfirmation(); 
+    window.location.reload(); 
   };
 
   return (
