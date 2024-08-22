@@ -109,7 +109,7 @@ const [reservationDetails, setReservationDetails] = useState({
 
         try {
           const response = await axios.get(requestURL);
-
+          console.log(response)
           if (response.data.results.length === 0) {
             setLocationDetails("Location not found");
             return;
