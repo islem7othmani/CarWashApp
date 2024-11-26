@@ -639,7 +639,7 @@ export default function Admin() {
                     activeIndex === 5 ? "bg-blue-500 rounded-lg" : ""
                   }`}
                   onClick={() => {
-                    handleItemClick(5);
+                    handleItemClick(5); 
                     changeUI6();
                   }}
                 ></li>
