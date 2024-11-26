@@ -10,7 +10,6 @@ const lavage = new mongoose.Schema({
 },{timestamps:true})
 
 
-
 const Lavage = mongoose.model("lavage",lavage)
 module.exports=Lavage
 
