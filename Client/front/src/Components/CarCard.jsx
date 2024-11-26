@@ -235,7 +235,7 @@ export default function CarCard({ car, onEdit }) {
                 onClick={closeDeleteConfirmation}
                 className="bg-gray-500 text-white px-4 py-2 rounded"
               >
-                Cancel
+                cancel
               </button>
             </div>
           </div>
